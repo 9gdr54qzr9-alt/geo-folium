@@ -1,0 +1,2940 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_c904a1c4d2da93d0bac87b09593f640b {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_c904a1c4d2da93d0bac87b09593f640b" ></div>
+        
+    
+<style>
+.search-panel {
+    position: fixed;
+    top: 28px;
+    left: 70px;
+    z-index: 9999;
+    width: 430px;
+    font-family: Arial, sans-serif;
+}
+.search-row {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 28px;
+    padding: 10px 16px 10px 22px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+}
+#storeSearchInput {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    padding: 12px 8px;
+    color: #333;
+}
+#storeSearchInput::placeholder {
+    color: #8a8a8a;
+}
+.search-button {
+    border: none;
+    background: transparent;
+    color: #777;
+    font-size: 30px;
+    cursor: pointer;
+    padding: 0 4px;
+}
+.search-button:hover {
+    color: #ff6600;
+}
+.location-button {
+    margin-top: 10px;
+    width: 100%;
+    padding: 11px;
+    border: none;
+    border-radius: 22px;
+    background: #ff6600;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+}
+.location-button:hover {
+    background: #e65c00;
+}
+#searchResults {
+    margin-top: 12px;
+    background: white;
+    border-radius: 18px;
+    padding: 12px;
+    max-height: 370px;
+    overflow-y: auto;
+    font-size: 13px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+}
+.result-card {
+    background: #fff7f0;
+    border-left: 5px solid #ff6600;
+    margin-bottom: 9px;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.result-card:hover {
+    background: #ffe3cc;
+}
+.result-name {
+    font-weight: bold;
+    color: #2b2b2b;
+}
+.result-address {
+    color: #555;
+    margin-top: 4px;
+}
+.result-distance {
+    color: #ff6600;
+    font-weight: bold;
+    margin-top: 4px;
+}
+.result-count {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #ff6600;
+}
+.error-msg {
+    color: #dc3545;
+    font-weight: bold;
+}
+</style>
+<div class="search-panel">
+    <div class="search-row">
+        <input id="storeSearchInput" type="text"
+        placeholder="Αναζήτηση καταστήματος ή διεύθυνσης">
+        <button class="search-button" onclick="searchStore()">⌕</button>
+    </div>
+    <button class="location-button" onclick="findNearestStores()">
+        📍 Βρες κοντινά καταστήματα
+    </button>
+    <div id="searchResults"></div>
+</div>
+<script>
+var stores = [{"name": "ΤΣΑΚΑΛΟΣ ΑΣΗΜΑΚΗΣ", "address": "25100, Greece", "lat": 38.2322476, "lon": 22.0576006}, {"name": "ΚΑΤΩΧΙΑΝΟΣ ΔΗΜΗΤΡΗΣ", "address": "31100, Greece", "lat": 38.7852941, "lon": 20.7128199}, {"name": "ΠΡΟΤΥΠΟ ΚΕΝΤΡΟ ΠΡΟΙΟΝΤΩΝ ΑΠΟΚΑΤΑΣΤΑΣΗΣ ΕΕ", "address": "57001, Greece", "lat": 40.5434956, "lon": 23.0083757}, {"name": "ΟΡΘΟΠΕΔΙΚΑ ΗΠΕΙΡΟΥ ΓΟΥΔΕΛΗ ΠΑΡΑΣΚΕΥΗ", "address": "46100, Greece", "lat": 39.5004589, "lon": 20.2659714}, {"name": "ΓΙΑΝΝΕΚΟΣ  ΑΘΑΝΑΣΙΟΣ -ΑΓΓΕΛΟΣ", "address": "35100, Greece", "lat": 38.8797282, "lon": 22.4403851}, {"name": "ΠΑΠΑΝΑΣΤΑΣΙΟΥ ΑΙΚΑΤΕΡΙΝΗ ΤΟΥ ΓΕΩΡΓΙΟΥ", "address": "19010, Greece", "lat": 37.8123346, "lon": 23.9149739}, {"name": "ΣΑΡΡΗΣ ΝΙΚΟΛΑΟΣ ΤΟΥ ΕΛΕΥΘΕΡΙΟΥ", "address": "11364, Greece", "lat": 38.0059992, "lon": 23.7410434}, {"name": "ΠΑΠΑΔΗΜΗΤΡΙΟΥ  ΧΡΥΣΑΝΘΗ", "address": "57001, Greece", "lat": 40.5434956, "lon": 23.0083757}, {"name": "ΠΑΝΟΣ ΑΡΗΣ -ΧΡΗΣΤΟΣ Α. HOME CARE", "address": "55133, Greece", "lat": 40.5838202, "lon": 22.9577963}, {"name": "PWM MEDICAL LTD", "address": "1066, Greece", "lat": 43.2416772, "lon": -77.7303102}, {"name": "ARTHROMED PLUS E.E.", "address": "54645, Greece", "lat": 40.6013483, "lon": 22.9528272}, {"name": "ΤΟΠΑΛΙΔΗΣ ΗΛΙΑΣ ORTHOMEDICAL", "address": "50100, Greece", "lat": 40.3093559, "lon": 21.8166075}, {"name": "Δ.ΔΟΒΑΣ & ΣΙΑ Ο.Ε OXYCARE", "address": "45332, Greece", "lat": 39.6591664, "lon": 20.8498525}, {"name": "ΜΗΤΣΙΟΥ Δ ΡΙΖΟΣ", "address": "41221, Greece", "lat": 39.6392374, "lon": 22.4190231}, {"name": "ΦΙΛΙΠΠΙΔΟΥ ΧΑΡ.-ΦΙΛΙΠΠΙΔΟΥ ΣΟΦ. ΟΕ", "address": "68100, Greece", "lat": 40.8520795, "lon": 25.872522}, {"name": "ΣΙΑΣΙΟΣ ΙΟΡΔ.ΑΡΙΣΤΕΙΔΗΣ", "address": "56430, Greece", "lat": 40.6623673, "lon": 22.9319191}, {"name": "ΤΑΧΜΑΤΖΙΔΗΣ ΘΕΟΔΩΡΟΣ", "address": "18538, Greece", "lat": 37.935335, "lon": 23.6345218}, {"name": "ΔΟΒΡΙΔΗΣ ΔΩΡΟΘΕΟΣ", "address": "68200, Greece", "lat": 41.5031487, "lon": 26.5222637}, {"name": "GMTP MIKE", "address": "55133, Greece", "lat": 40.5838202, "lon": 22.9577963}, {"name": "ΒΟΥΤΣΑΣ ΔΗΜΟΣ", "address": "69100, Greece", "lat": 41.1171078, "lon": 25.4054806}, {"name": "ΦΑΡΜΑΚΕΙΟ ΒΑΣΙΛΕΙΟΣ ΕΜΜΑΝΟΥΗΛ  ΓΑΒΑΛΑΣ", "address": "85200, Greece", "lat": 36.982577, "lon": 26.968252}, {"name": "ΣΤΑΘΟΠΟΥΛΟΣ ΚΑΙ ΣΙΑ ΕΕ", "address": "84100, Greece", "lat": 37.4376334, "lon": 24.9357171}, {"name": "eHealth Care- ΧΕΛΙΔΩΝΗ ΑΝΑΣΤΑΣΙΑ ΗΛΙΑΣ", "address": "40200, Greece", "lat": 39.9358328, "lon": 22.1615558}, {"name": "ΧΑΤΖΗΜΑΡΚΑΚΗΣ ΓΕΩΡΓΙΟΣ", "address": "26221, Greece", "lat": 38.2464559, "lon": 21.7348192}, {"name": "REHAB CARE ΑΝΤΩΝΙΟΥ ΑΝΤΩΝΙΟΣ", "address": "8220, Greece", "lat": 43.2581805, "lon": -77.6970101}, {"name": "ΓΕΩΡΓΟΥΛΑΚΗ ΚΑΛΛΙΟΠΗ", "address": "54622, Greece", "lat": 40.6306531, "lon": 22.9469153}, {"name": "REHAB CARE IKE", "address": "16346, Greece", "lat": 37.9365769, "lon": 23.7478924}, {"name": "SKYMIND A.S. LIMITED", "address": "1011, Greece", "lat": 43.2433335, "lon": -77.827702}, {"name": "Δ. ΤΖΑΤΖΑΛΙΑΡΗΣ & Σ. ΤΣΙΡΙΓΩΤΗ ΟΕ", "address": "19100, Greece", "lat": 38.0045554, "lon": 23.3174162}, {"name": "ΜΠΕΛΕΓΡΑΤΗ Α Ε.Ε", "address": "34132, Greece", "lat": 38.468631, "lon": 23.6033374}, {"name": "ΒΑΔΑΡΛΗΣ ΧΡΗΣΤΟΣ ΜΕΡΤΙΚΑΣ ΠΑΝΑΓΙΩΤΗΣ Ο.Ε.", "address": "62124, Greece", "lat": 41.0866975, "lon": 23.5551031}, {"name": "MEDISPORTS ΕΠΕ", "address": "15231, Greece", "lat": 38.0140347, "lon": 23.7927845}, {"name": "ΓΕΩΡΓΙΟΣ ΜΠΑΓΟΡΔΑΚΗΣ", "address": "72300, Greece", "lat": 35.1869553, "lon": 26.1335469}, {"name": "ΚΑΡΔΑΡΑΣ ΠΑΝΑΓΙΩΤΗΣ", "address": "55132, Greece", "lat": 40.575345, "lon": 22.9556242}, {"name": "ΜΠΑΛΛΑΣ Θ. ΠΑΠΑΔΟΠΟΥΛΟΣ Χ. ΟΕ", "address": "66132, Greece", "lat": 41.150402, "lon": 24.1472335}, {"name": "ΥΠΗΡΕΣΙΕΣ ΕΦΑΡΜΟΓΩΝ ΥΓΕΙΑΣ Ι Κ Ε", "address": "26223, Greece", "lat": 38.2528703, "lon": 21.7416191}, {"name": "OXYGENIUM ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ", "address": "11525, Greece", "lat": 37.9974095, "lon": 23.7737106}, {"name": "ΛΟΥΠΕΪΔΗΣ ΜΕΛΕΤΙΟΣ", "address": "54250, Greece", "lat": 40.6018774, "lon": 22.9716118}, {"name": "HEALTH TEAM ΙΑΤΡΙΚΑ ΙΚΕ", "address": "17673, Greece", "lat": 37.9497164, "lon": 23.7002085}, {"name": "ΑΝΤΩΝΗΣ ΤΣΑΚΙΡΟΓΛΟΥ & ΣΙΑ Ο.Ε.", "address": "66132, Greece", "lat": 41.150402, "lon": 24.1472335}, {"name": "ΛΑΓΙΟΣ Γ ΣΩΚΡΑΤΗΣ", "address": "19100, Greece", "lat": 38.0045554, "lon": 23.3174162}, {"name": "ΕΛΕΝΗ Α. ΚΑΡΑΣΤΕΡΓΙΟΥ", "address": "63075, Greece", "lat": 40.352507, "lon": 23.86435}, {"name": "ΦΑΡΜΑΚΕΙΟ ΑΙΚΑΤΕΡΙΝΗΣ Χ. ΠΡΙΟΒΟΛΟΥ", "address": "15771, Greece", "lat": 37.9773043, "lon": 23.7621822}, {"name": "ΣΥΣΤ ΦΑΡΜ. ΙΘ.ΚΟΜΠΟΤΗΣ-Α.Α ΚΟΛΟΚΥΘΑ Ο.Ε", "address": "32100, Greece", "lat": 38.440696, "lon": 22.8805499}, {"name": "ΑΙΚΑΤΕΡΙΝΗ ΤΣΕΛΙΟΥ ΚΑΙ ΣΙΑ Ο.Ε", "address": "42100, Greece", "lat": 39.5571616, "lon": 21.750484}, {"name": "ΦΑΡΜΑΚΕΙΟ ΦΑΝΟΥΛΑΣ ΣΠΥΡΙΔΩΝ", "address": "57001, Greece", "lat": 40.5434956, "lon": 23.0083757}, {"name": "ΦΑΡΜΑΚΕΙΟ ΝΤΑΓΚΑΣ ΙΩΑΝΝΗΣ", "address": "56727, Greece", "lat": 40.6551579, "lon": 22.9372699}, {"name": "ΣΥΣΤΕΓΑΣΜΕΝΑ ΦΑΡΜΑΚΕΙΑ ΠΑΝΤΟΥ ΙΩΑΝΝΑ-ΓΙΑΝΝΟΥΛΗ ΑΝΔΡΟΝΙΚΗ ΚΑΙ ΣΙΑ ΟΕ", "address": "54632, Greece", "lat": 40.6437255, "lon": 22.9415318}, {"name": "ΦΑΡΜΑΚΕΙΟ ΔΗΜΗΤΡΙΟΣ  Ι ΜΗΤΡΟΦΑΝΗΣ", "address": "63075, Greece", "lat": 40.352507, "lon": 23.86435}, {"name": "ΚΟΛΙΟΣ ΑΝΤΩΝΗΣ Τ. ΝΙΚΟΛΑΟΥ", "address": "19300, Greece", "lat": 38.0691655, "lon": 23.5974741}, {"name": "ΤΣΙΟΤΣΙΟΣ ΑΘΑΝΑΣΙΟΣ ΟΕ", "address": "38221, Greece", "lat": 39.3625196, "lon": 22.9509185}, {"name": "ΣΥΣΤ ΦΑΡΜ ΜΙΧΑΗΛ ΜΑΡΓΑΡΙΤΙΔΗΣ-ΡΑΦΑΕΛΑ ΜΑΡΓΑΡΙΤΙΔΟΥ ΟΕ", "address": "63200, Greece", "lat": 40.2532112, "lon": 23.276714}, {"name": "ΦΑΡΜΑΚΕΙΟ ΡΟΥΣΗ ΑΛΚΗΣΤΗΣ", "address": "84600, Greece", "lat": 37.4399031, "lon": 25.317742}, {"name": "ΦΑΡΜΑΚΕΙΟ ΛΑΖΟΓΕΩΡΓΟΥ ΠΑΓΩΝΙΤΣΑ", "address": "17237, Greece", "lat": 37.9521119, "lon": 23.7418356}, {"name": "ΚΑΡΑΝΙΚΑΣ  ΙΩΑΝΝΗΣ", "address": "35101, Greece", "lat": 43.2581805, "lon": -77.6970101}, {"name": "ΦΑΡΜΑΚΕΙΟ ΙΩΑΝΝΗΣ ΜΑΛΟΓΙΑΝΝΗΣ ΚΑΙ ΣΙΑ Ο.Ε", "address": "57002, Greece", "lat": 40.7735419, "lon": 23.396961}, {"name": "ΚΕΦΑΛΑ ΔΕΣΠΟΙΝΑ ΧΡΙΣΤΙΝΑ", "address": "12461, Greece", "lat": 38.0088427, "lon": 23.663557}, {"name": "ΦΑΡΜΑΚΕΙΟ  ΔΙΡΧΑΛΙΔΟΥ  ΡΕΒΕΚΚΑ", "address": "16674, Greece", "lat": 37.8660244, "lon": 23.7563911}, {"name": "ΜΟΥΡΑΤΙΑΝ Χ ΚΩΝΣΤΑΝΤΙΝΟΣ", "address": "43200, Greece", "lat": 39.4730217, "lon": 22.068437}, {"name": "ΦΑΡΜΑΚΕΙΟ ΧΡΗΣΤΟΥ ΠΑΠΑΙΩΑΝΝΟΥ ΚΑΙ ΣΙΑ ΕΕ", "address": "14564, Greece", "lat": 38.0921481, "lon": 23.8001617}, {"name": "ΒΑΛΛΑΣ ΑΠΟΣΤΟΛΟΣ", "address": "40200, Greece", "lat": 39.9358328, "lon": 22.1615558}, {"name": "ΦΑΡΜΑΚΕΙΟ ΦΩΤΕΙΝΗ ΙΟΡΔΑΝΟΓΛΟΥ &ΣΙΑ Ε.Ε.", "address": "17455, Greece", "lat": 37.9120907, "lon": 23.7198734}, {"name": "ΦΑΡΜΑΚΕΙΟ ΒΑΣΙΛΑΔΙΩΤΗΣ ΗΛΙΑΣ", "address": "15351, Greece", "lat": 38.0001646, "lon": 23.8752155}, {"name": "ΑΥΓΕΡΙΝΟΣ ΓΕΩΡ. ΘΕΟΔΩΡΟΣ", "address": "62123, Greece", "lat": 41.0884642, "lon": 23.548382}, {"name": "ΔΟΥΛΚΕΡΙΔΗΣ ΚΟΣΜΑΣ ΠΑΝΑΓΙΩΤΗΣ", "address": "58500, Greece", "lat": 40.7734432, "lon": 22.164001}, {"name": "ΦΑΡΜΑΚΕΙΟ ΣΤΕΡΓΙΟΠΟΥΛΟΣ ΑΝΤΩΝΙΟΣ", "address": "50400, Greece", "lat": 40.2626246, "lon": 22.0882661}, {"name": "ΦΑΡΜΑΚΕΙΟ ΑΜΟΥΡΓΙΑΝΟΥ ΜΑΡΙΑ", "address": "14341, Greece", "lat": 38.0339904, "lon": 23.7383544}, {"name": "ΔΑΣΚΑΛΑΚΗΣ Ι.-ΔΑΣΚΑΛΑΚΗΣ Ν. Ο.Ε", "address": "70010, Greece", "lat": 35.0204693, "lon": 25.1314955}, {"name": "ΦΑΡΜΑΚΕΙΟ ΚΙΜΩΝ ΚΟΥΚΟΥΖΕΛΗΣ & ΔΗΜΗΤΡΙΟΣ ΚΟΥΚΟΥΖΕΛΗΣ Ο.Ε.", "address": "84600, Greece", "lat": 37.4399031, "lon": 25.317742}, {"name": "FYLAKTO 2022", "address": "18531, Greece", "lat": 37.9456394, "lon": 23.645459}, {"name": "TECNOWAY SRL", "address": "61022, Greece", "lat": 52.470943, "lon": -1.9244472}, {"name": "Moovartes", "address": "3600, Greece", "lat": 43.2247851, "lon": -77.6577015}, {"name": "MEIJER ORTHOPEDIE", "address": "1054 BW, Greece", "lat": 43.2581805, "lon": -77.6970101}, {"name": "CAMBIOMED  ARTUR PIECZONKA", "address": "43-300, Greece", "lat": 43.2581805, "lon": -77.6970101}, {"name": "Buraca d.o.o", "address": "1000, Greece", "lat": 43.2270114, "lon": -77.7317467}, {"name": "EUMEDICA SRL", "address": "35027, Greece", "lat": 43.2581805, "lon": -77.6970101}, {"name": "SPECIALISTCENTER SCANDINAVIA", "address": "63220, Greece", "lat": 52.470943, "lon": -1.9244472}, {"name": "HIBERNIA MEDICAL SUPPLIES LTD", "address": "D12 NA40, Greece", "lat": 43.2581805, "lon": -77.6970101}];
+var userLocationMarker = null;
+function normalizeText(text) {
+    return String(text)
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/ς/g, "σ")
+        .replace(/[^a-zα-ω0-9 ]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+function escapeText(text) {
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+function distanceKm(lat1, lon1, lat2, lon2) {
+    var R = 6371;
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLon = (lon2 - lon1) * Math.PI / 180;
+    var a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) *
+        Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
+function goToStore(lat, lon, index) {
+    var result = stores[index];
+    map_c904a1c4d2da93d0bac87b09593f640b.setView([lat, lon], 16);
+    L.popup()
+        .setLatLng([lat, lon])
+        .setContent("<b>" + escapeText(result.name) + "</b><br>" + escapeText(result.address))
+        .openOn(map_c904a1c4d2da93d0bac87b09593f640b);
+}
+function renderResults(results, title, showDistance) {
+    var resultsDiv = document.getElementById("searchResults");
+    if (results.length === 0) {
+        resultsDiv.innerHTML = "<div class='error-msg'>Δεν βρέθηκαν αποτελέσματα.</div>";
+        return;
+    }
+    var html = "<div class='result-count'>" + title + "</div>";
+    results.forEach(function(result, listIndex) {
+        html +=
+            "<div class='result-card' onclick='goToStore(" + result.lat + "," + result.lon + "," + result.index + ")'>" +
+            "<div class='result-name'>" + (listIndex + 1) + ". " + escapeText(result.name) + "</div>" +
+            "<div class='result-address'>📍 " + escapeText(result.address) + "</div>";
+        if (showDistance) {
+            html += "<div class='result-distance'>" + result.distance.toFixed(2) + " km μακριά</div>";
+        }
+        html += "</div>";
+    });
+    resultsDiv.innerHTML = html;
+}
+function zoomToResults(results) {
+    var bounds = results.map(function(result) {
+        return [result.lat, result.lon];
+    });
+    if (bounds.length === 1) {
+        map_c904a1c4d2da93d0bac87b09593f640b.setView(bounds[0], 16);
+    } else {
+        map_c904a1c4d2da93d0bac87b09593f640b.fitBounds(bounds);
+    }
+}
+function searchStore() {
+    var q = document.getElementById("storeSearchInput").value;
+    var query = normalizeText(q);
+    if (!query) {
+        document.getElementById("searchResults").innerHTML =
+            "<div class='error-msg'>Γράψε όνομα ή διεύθυνση.</div>";
+        return;
+    }
+    var results = stores
+        .map(function(s, index) {
+            return {
+                index: index,
+                name: s.name,
+                address: s.address,
+                lat: s.lat,
+                lon: s.lon
+            };
+        })
+        .filter(function(s) {
+            return normalizeText(s.name).includes(query) ||
+                   normalizeText(s.address).includes(query);
+        });
+    if (results.length > 0) {
+        renderResults(results, "Βρέθηκαν " + results.length + " αποτελέσματα", false);
+        zoomToResults(results);
+    } else {
+        document.getElementById("searchResults").innerHTML =
+            "<div class='error-msg'>Δεν βρέθηκε: " + escapeText(q) + "</div>";
+    }
+}
+function findNearestStores() {
+    var resultsDiv = document.getElementById("searchResults");
+    if (!navigator.geolocation) {
+        resultsDiv.innerHTML = "<div class='error-msg'>Ο browser δεν υποστηρίζει τοποθεσία.</div>";
+        return;
+    }
+    resultsDiv.innerHTML = "<div class='result-count'>Ζητείται πρόσβαση στην τοποθεσία...</div>";
+    navigator.geolocation.getCurrentPosition(function(position) {
+        var userLat = position.coords.latitude;
+        var userLon = position.coords.longitude;
+        if (userLocationMarker !== null) {
+            map_c904a1c4d2da93d0bac87b09593f640b.removeLayer(userLocationMarker);
+        }
+        userLocationMarker = L.marker([userLat, userLon])
+            .addTo(map_c904a1c4d2da93d0bac87b09593f640b)
+            .bindPopup("<b>Η τοποθεσία σου</b>")
+            .openPopup();
+        var nearest = stores
+            .map(function(s, index) {
+                return {
+                    index: index,
+                    name: s.name,
+                    address: s.address,
+                    lat: s.lat,
+                    lon: s.lon,
+                    distance: distanceKm(userLat, userLon, s.lat, s.lon)
+                };
+            })
+            .sort(function(a, b) {
+                return a.distance - b.distance;
+            })
+            .slice(0, 5);
+        renderResults(nearest, "Κοντινότερα 5 καταστήματα", true);
+        var bounds = nearest.map(function(result) {
+            return [result.lat, result.lon];
+        });
+        bounds.push([userLat, userLon]);
+        map_c904a1c4d2da93d0bac87b09593f640b.fitBounds(bounds);
+    }, function(error) {
+        console.log(error);
+        resultsDiv.innerHTML =
+            "<div class='error-msg'>Error code: " +
+            error.code +
+            "<br>" +
+            error.message +
+            "</div>";
+    });
+}
+document.getElementById("storeSearchInput").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+        searchStore();
+    }
+});
+</script>
+</body>
+<script>
+    
+    
+            var map_c904a1c4d2da93d0bac87b09593f640b = L.map(
+                "map_c904a1c4d2da93d0bac87b09593f640b",
+                {
+                    center: [39.11128915390429, 16.065143256675064],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 7,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_0d1c931aaebe3b4e1dd14d3181c4a42b = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_0d1c931aaebe3b4e1dd14d3181c4a42b.addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+            var circle_marker_04c27717265378e5d67f20bd7f0ca5df = L.circleMarker(
+                [38.2322476, 22.0576006],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_105775d4e0227be92a63456e7a08e826 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_24d39366b66819718afd270ed93c6d9c = $(`<div id="html_24d39366b66819718afd270ed93c6d9c" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΤΣΑΚΑΛΟΣ ΑΣΗΜΑΚΗΣ</b><br>         25100, Greece     </div>     </div>`)[0];
+                popup_105775d4e0227be92a63456e7a08e826.setContent(html_24d39366b66819718afd270ed93c6d9c);
+            
+        
+
+        circle_marker_04c27717265378e5d67f20bd7f0ca5df.bindPopup(popup_105775d4e0227be92a63456e7a08e826)
+        ;
+
+        
+    
+    
+            circle_marker_04c27717265378e5d67f20bd7f0ca5df.bindTooltip(
+                `<div>
+                     ΤΣΑΚΑΛΟΣ ΑΣΗΜΑΚΗΣ - 25100, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_1bbd1b9b0150f9505d5e49c6bbcae1ac = L.circleMarker(
+                [38.7852941, 20.7128199],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_c08646b0b7a42c3b8972f9070af786e3 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_8a56f2916c50b9eebbdbfc9b3cb3cad0 = $(`<div id="html_8a56f2916c50b9eebbdbfc9b3cb3cad0" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΚΑΤΩΧΙΑΝΟΣ ΔΗΜΗΤΡΗΣ</b><br>         31100, Greece     </div>     </div>`)[0];
+                popup_c08646b0b7a42c3b8972f9070af786e3.setContent(html_8a56f2916c50b9eebbdbfc9b3cb3cad0);
+            
+        
+
+        circle_marker_1bbd1b9b0150f9505d5e49c6bbcae1ac.bindPopup(popup_c08646b0b7a42c3b8972f9070af786e3)
+        ;
+
+        
+    
+    
+            circle_marker_1bbd1b9b0150f9505d5e49c6bbcae1ac.bindTooltip(
+                `<div>
+                     ΚΑΤΩΧΙΑΝΟΣ ΔΗΜΗΤΡΗΣ - 31100, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_d0ba5662e5a366cf3390ca5acbe2105b = L.circleMarker(
+                [40.5434956, 23.0083757],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_501f4ec77883e097265366bbbfd3cd73 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_5e09e7ffc5fdfedc52d9b0ad426b57e3 = $(`<div id="html_5e09e7ffc5fdfedc52d9b0ad426b57e3" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΠΡΟΤΥΠΟ ΚΕΝΤΡΟ ΠΡΟΙΟΝΤΩΝ ΑΠΟΚΑΤΑΣΤΑΣΗΣ ΕΕ</b><br>         57001, Greece     </div>     </div>`)[0];
+                popup_501f4ec77883e097265366bbbfd3cd73.setContent(html_5e09e7ffc5fdfedc52d9b0ad426b57e3);
+            
+        
+
+        circle_marker_d0ba5662e5a366cf3390ca5acbe2105b.bindPopup(popup_501f4ec77883e097265366bbbfd3cd73)
+        ;
+
+        
+    
+    
+            circle_marker_d0ba5662e5a366cf3390ca5acbe2105b.bindTooltip(
+                `<div>
+                     ΠΡΟΤΥΠΟ ΚΕΝΤΡΟ ΠΡΟΙΟΝΤΩΝ ΑΠΟΚΑΤΑΣΤΑΣΗΣ ΕΕ - 57001, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_262858ec1e295d62c11d602658be02ba = L.circleMarker(
+                [39.5004589, 20.2659714],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_3e637faf7d547d1d76f6cb3153075273 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_8e50b47a2d1eb30af0c2f9f7aee82433 = $(`<div id="html_8e50b47a2d1eb30af0c2f9f7aee82433" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΟΡΘΟΠΕΔΙΚΑ ΗΠΕΙΡΟΥ ΓΟΥΔΕΛΗ ΠΑΡΑΣΚΕΥΗ</b><br>         46100, Greece     </div>     </div>`)[0];
+                popup_3e637faf7d547d1d76f6cb3153075273.setContent(html_8e50b47a2d1eb30af0c2f9f7aee82433);
+            
+        
+
+        circle_marker_262858ec1e295d62c11d602658be02ba.bindPopup(popup_3e637faf7d547d1d76f6cb3153075273)
+        ;
+
+        
+    
+    
+            circle_marker_262858ec1e295d62c11d602658be02ba.bindTooltip(
+                `<div>
+                     ΟΡΘΟΠΕΔΙΚΑ ΗΠΕΙΡΟΥ ΓΟΥΔΕΛΗ ΠΑΡΑΣΚΕΥΗ - 46100, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_2cac0c8dd86ce1290c1f543f662617a8 = L.circleMarker(
+                [38.8797282, 22.4403851],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_fe28e28235d7d310363c1faffc7110b8 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_7c6532c9778a291094927431471253a9 = $(`<div id="html_7c6532c9778a291094927431471253a9" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΓΙΑΝΝΕΚΟΣ  ΑΘΑΝΑΣΙΟΣ -ΑΓΓΕΛΟΣ</b><br>         35100, Greece     </div>     </div>`)[0];
+                popup_fe28e28235d7d310363c1faffc7110b8.setContent(html_7c6532c9778a291094927431471253a9);
+            
+        
+
+        circle_marker_2cac0c8dd86ce1290c1f543f662617a8.bindPopup(popup_fe28e28235d7d310363c1faffc7110b8)
+        ;
+
+        
+    
+    
+            circle_marker_2cac0c8dd86ce1290c1f543f662617a8.bindTooltip(
+                `<div>
+                     ΓΙΑΝΝΕΚΟΣ  ΑΘΑΝΑΣΙΟΣ -ΑΓΓΕΛΟΣ - 35100, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_8bc04f09f5dec459733d5b1b5db2d40b = L.circleMarker(
+                [37.8123346, 23.9149739],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_ae0c215aa3bc96b3396a9acded4b5b23 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_f7cda2f62d6cb3af5bc0ebe24d78be50 = $(`<div id="html_f7cda2f62d6cb3af5bc0ebe24d78be50" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΠΑΠΑΝΑΣΤΑΣΙΟΥ ΑΙΚΑΤΕΡΙΝΗ ΤΟΥ ΓΕΩΡΓΙΟΥ</b><br>         19010, Greece     </div>     </div>`)[0];
+                popup_ae0c215aa3bc96b3396a9acded4b5b23.setContent(html_f7cda2f62d6cb3af5bc0ebe24d78be50);
+            
+        
+
+        circle_marker_8bc04f09f5dec459733d5b1b5db2d40b.bindPopup(popup_ae0c215aa3bc96b3396a9acded4b5b23)
+        ;
+
+        
+    
+    
+            circle_marker_8bc04f09f5dec459733d5b1b5db2d40b.bindTooltip(
+                `<div>
+                     ΠΑΠΑΝΑΣΤΑΣΙΟΥ ΑΙΚΑΤΕΡΙΝΗ ΤΟΥ ΓΕΩΡΓΙΟΥ - 19010, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_69d5b7945dce38e4aef9a09070f5be8e = L.circleMarker(
+                [38.0059992, 23.7410434],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_69396dae8ad02bb4bf2a1ac8d4723603 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_a391fe348de75ed04faab023e413a912 = $(`<div id="html_a391fe348de75ed04faab023e413a912" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΣΑΡΡΗΣ ΝΙΚΟΛΑΟΣ ΤΟΥ ΕΛΕΥΘΕΡΙΟΥ</b><br>         11364, Greece     </div>     </div>`)[0];
+                popup_69396dae8ad02bb4bf2a1ac8d4723603.setContent(html_a391fe348de75ed04faab023e413a912);
+            
+        
+
+        circle_marker_69d5b7945dce38e4aef9a09070f5be8e.bindPopup(popup_69396dae8ad02bb4bf2a1ac8d4723603)
+        ;
+
+        
+    
+    
+            circle_marker_69d5b7945dce38e4aef9a09070f5be8e.bindTooltip(
+                `<div>
+                     ΣΑΡΡΗΣ ΝΙΚΟΛΑΟΣ ΤΟΥ ΕΛΕΥΘΕΡΙΟΥ - 11364, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_93a664625277a70f125021eb8651bbaf = L.circleMarker(
+                [40.5434956, 23.0083757],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_43c3fc171f7ae3c1efbb1c02f73781ad = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_d26866ac9117a1ccf4607318493066d9 = $(`<div id="html_d26866ac9117a1ccf4607318493066d9" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΠΑΠΑΔΗΜΗΤΡΙΟΥ  ΧΡΥΣΑΝΘΗ</b><br>         57001, Greece     </div>     </div>`)[0];
+                popup_43c3fc171f7ae3c1efbb1c02f73781ad.setContent(html_d26866ac9117a1ccf4607318493066d9);
+            
+        
+
+        circle_marker_93a664625277a70f125021eb8651bbaf.bindPopup(popup_43c3fc171f7ae3c1efbb1c02f73781ad)
+        ;
+
+        
+    
+    
+            circle_marker_93a664625277a70f125021eb8651bbaf.bindTooltip(
+                `<div>
+                     ΠΑΠΑΔΗΜΗΤΡΙΟΥ  ΧΡΥΣΑΝΘΗ - 57001, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_142c550377752908ff45cf6f90d7eb12 = L.circleMarker(
+                [40.5838202, 22.9577963],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_3064cc3cbd2732ee7698b24e44e46524 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_7629bff7711edde9d8cdedfb440ede61 = $(`<div id="html_7629bff7711edde9d8cdedfb440ede61" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΠΑΝΟΣ ΑΡΗΣ -ΧΡΗΣΤΟΣ Α. HOME CARE</b><br>         55133, Greece     </div>     </div>`)[0];
+                popup_3064cc3cbd2732ee7698b24e44e46524.setContent(html_7629bff7711edde9d8cdedfb440ede61);
+            
+        
+
+        circle_marker_142c550377752908ff45cf6f90d7eb12.bindPopup(popup_3064cc3cbd2732ee7698b24e44e46524)
+        ;
+
+        
+    
+    
+            circle_marker_142c550377752908ff45cf6f90d7eb12.bindTooltip(
+                `<div>
+                     ΠΑΝΟΣ ΑΡΗΣ -ΧΡΗΣΤΟΣ Α. HOME CARE - 55133, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_fc2bbd0ba96f7c11a462201533254745 = L.circleMarker(
+                [43.2416772, -77.7303102],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_7bc11cb93d2928aae747588959c1482a = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_468d9fe65b415ee1b8c63041c242ce45 = $(`<div id="html_468d9fe65b415ee1b8c63041c242ce45" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>PWM MEDICAL LTD</b><br>         1066, Greece     </div>     </div>`)[0];
+                popup_7bc11cb93d2928aae747588959c1482a.setContent(html_468d9fe65b415ee1b8c63041c242ce45);
+            
+        
+
+        circle_marker_fc2bbd0ba96f7c11a462201533254745.bindPopup(popup_7bc11cb93d2928aae747588959c1482a)
+        ;
+
+        
+    
+    
+            circle_marker_fc2bbd0ba96f7c11a462201533254745.bindTooltip(
+                `<div>
+                     PWM MEDICAL LTD - 1066, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_8a5a1e10186a7f00dc59c8aee6f9b091 = L.circleMarker(
+                [40.6013483, 22.9528272],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_1732c855ccc7a774d42e7fd1e8dc2edf = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_34a95bf1f0a1a3337dbdda015836baab = $(`<div id="html_34a95bf1f0a1a3337dbdda015836baab" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ARTHROMED PLUS E.E.</b><br>         54645, Greece     </div>     </div>`)[0];
+                popup_1732c855ccc7a774d42e7fd1e8dc2edf.setContent(html_34a95bf1f0a1a3337dbdda015836baab);
+            
+        
+
+        circle_marker_8a5a1e10186a7f00dc59c8aee6f9b091.bindPopup(popup_1732c855ccc7a774d42e7fd1e8dc2edf)
+        ;
+
+        
+    
+    
+            circle_marker_8a5a1e10186a7f00dc59c8aee6f9b091.bindTooltip(
+                `<div>
+                     ARTHROMED PLUS E.E. - 54645, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_0d52fca335c620f77db5c8a017b65332 = L.circleMarker(
+                [40.3093559, 21.8166075],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_48a8654ae899d941eb41ec73a0584016 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_3728728baed5630612cabf3a86946d69 = $(`<div id="html_3728728baed5630612cabf3a86946d69" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΤΟΠΑΛΙΔΗΣ ΗΛΙΑΣ ORTHOMEDICAL</b><br>         50100, Greece     </div>     </div>`)[0];
+                popup_48a8654ae899d941eb41ec73a0584016.setContent(html_3728728baed5630612cabf3a86946d69);
+            
+        
+
+        circle_marker_0d52fca335c620f77db5c8a017b65332.bindPopup(popup_48a8654ae899d941eb41ec73a0584016)
+        ;
+
+        
+    
+    
+            circle_marker_0d52fca335c620f77db5c8a017b65332.bindTooltip(
+                `<div>
+                     ΤΟΠΑΛΙΔΗΣ ΗΛΙΑΣ ORTHOMEDICAL - 50100, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_aa25ca69f7ee0b1428d396075bb5f4ce = L.circleMarker(
+                [39.6591664, 20.8498525],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_c80b6d01b15e4df39aca4c6b3a885f10 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_ff693530c591670befbfd0fd6a25b92b = $(`<div id="html_ff693530c591670befbfd0fd6a25b92b" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>Δ.ΔΟΒΑΣ & ΣΙΑ Ο.Ε OXYCARE</b><br>         45332, Greece     </div>     </div>`)[0];
+                popup_c80b6d01b15e4df39aca4c6b3a885f10.setContent(html_ff693530c591670befbfd0fd6a25b92b);
+            
+        
+
+        circle_marker_aa25ca69f7ee0b1428d396075bb5f4ce.bindPopup(popup_c80b6d01b15e4df39aca4c6b3a885f10)
+        ;
+
+        
+    
+    
+            circle_marker_aa25ca69f7ee0b1428d396075bb5f4ce.bindTooltip(
+                `<div>
+                     Δ.ΔΟΒΑΣ & ΣΙΑ Ο.Ε OXYCARE - 45332, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_ea625b3b95750a55a0c629cbc91a53be = L.circleMarker(
+                [39.6392374, 22.4190231],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_4989bf7cd8cdab19bdeffde9d03183cb = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_f39d30b860abae3a6b2b86fecbd09798 = $(`<div id="html_f39d30b860abae3a6b2b86fecbd09798" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΜΗΤΣΙΟΥ Δ ΡΙΖΟΣ</b><br>         41221, Greece     </div>     </div>`)[0];
+                popup_4989bf7cd8cdab19bdeffde9d03183cb.setContent(html_f39d30b860abae3a6b2b86fecbd09798);
+            
+        
+
+        circle_marker_ea625b3b95750a55a0c629cbc91a53be.bindPopup(popup_4989bf7cd8cdab19bdeffde9d03183cb)
+        ;
+
+        
+    
+    
+            circle_marker_ea625b3b95750a55a0c629cbc91a53be.bindTooltip(
+                `<div>
+                     ΜΗΤΣΙΟΥ Δ ΡΙΖΟΣ - 41221, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_916def0f65e9dcafbb3a7af74bd088fe = L.circleMarker(
+                [40.8520795, 25.872522],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_824cd6545aaef23b2dff6e789e29b592 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_ec786af7b0e332a1ce78f507e0a8ed08 = $(`<div id="html_ec786af7b0e332a1ce78f507e0a8ed08" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΦΙΛΙΠΠΙΔΟΥ ΧΑΡ.-ΦΙΛΙΠΠΙΔΟΥ ΣΟΦ. ΟΕ</b><br>         68100, Greece     </div>     </div>`)[0];
+                popup_824cd6545aaef23b2dff6e789e29b592.setContent(html_ec786af7b0e332a1ce78f507e0a8ed08);
+            
+        
+
+        circle_marker_916def0f65e9dcafbb3a7af74bd088fe.bindPopup(popup_824cd6545aaef23b2dff6e789e29b592)
+        ;
+
+        
+    
+    
+            circle_marker_916def0f65e9dcafbb3a7af74bd088fe.bindTooltip(
+                `<div>
+                     ΦΙΛΙΠΠΙΔΟΥ ΧΑΡ.-ΦΙΛΙΠΠΙΔΟΥ ΣΟΦ. ΟΕ - 68100, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_1fd2ac3939919b42714bb2e76cb1fcbe = L.circleMarker(
+                [40.6623673, 22.9319191],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_f05a7edc70148b3cd41321c5ef06e23f = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_be312e21ec12538c7cab94cb62bf4de3 = $(`<div id="html_be312e21ec12538c7cab94cb62bf4de3" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΣΙΑΣΙΟΣ ΙΟΡΔ.ΑΡΙΣΤΕΙΔΗΣ</b><br>         56430, Greece     </div>     </div>`)[0];
+                popup_f05a7edc70148b3cd41321c5ef06e23f.setContent(html_be312e21ec12538c7cab94cb62bf4de3);
+            
+        
+
+        circle_marker_1fd2ac3939919b42714bb2e76cb1fcbe.bindPopup(popup_f05a7edc70148b3cd41321c5ef06e23f)
+        ;
+
+        
+    
+    
+            circle_marker_1fd2ac3939919b42714bb2e76cb1fcbe.bindTooltip(
+                `<div>
+                     ΣΙΑΣΙΟΣ ΙΟΡΔ.ΑΡΙΣΤΕΙΔΗΣ - 56430, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_54d76539bb902f935a2d366ce6c62dae = L.circleMarker(
+                [37.935335, 23.6345218],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_8ea83335c03701b39dd5d86829421dbe = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_8b93aac10a6a60afb963454f1115406c = $(`<div id="html_8b93aac10a6a60afb963454f1115406c" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΤΑΧΜΑΤΖΙΔΗΣ ΘΕΟΔΩΡΟΣ</b><br>         18538, Greece     </div>     </div>`)[0];
+                popup_8ea83335c03701b39dd5d86829421dbe.setContent(html_8b93aac10a6a60afb963454f1115406c);
+            
+        
+
+        circle_marker_54d76539bb902f935a2d366ce6c62dae.bindPopup(popup_8ea83335c03701b39dd5d86829421dbe)
+        ;
+
+        
+    
+    
+            circle_marker_54d76539bb902f935a2d366ce6c62dae.bindTooltip(
+                `<div>
+                     ΤΑΧΜΑΤΖΙΔΗΣ ΘΕΟΔΩΡΟΣ - 18538, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_829487b6c22b846a65ef96d4bd1ee6f1 = L.circleMarker(
+                [41.5031487, 26.5222637],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_073f09cf5f9a6dceb9edc76231244d93 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_c3e4db41ce780bbff059908367bf4008 = $(`<div id="html_c3e4db41ce780bbff059908367bf4008" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΔΟΒΡΙΔΗΣ ΔΩΡΟΘΕΟΣ</b><br>         68200, Greece     </div>     </div>`)[0];
+                popup_073f09cf5f9a6dceb9edc76231244d93.setContent(html_c3e4db41ce780bbff059908367bf4008);
+            
+        
+
+        circle_marker_829487b6c22b846a65ef96d4bd1ee6f1.bindPopup(popup_073f09cf5f9a6dceb9edc76231244d93)
+        ;
+
+        
+    
+    
+            circle_marker_829487b6c22b846a65ef96d4bd1ee6f1.bindTooltip(
+                `<div>
+                     ΔΟΒΡΙΔΗΣ ΔΩΡΟΘΕΟΣ - 68200, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_261d2ef4b558538ec91f789a8a94df43 = L.circleMarker(
+                [40.5838202, 22.9577963],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_c09f7f347050e1f2d30a96ffd112bd0b = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_13f36ab4e3e162339a35b50f3cec1320 = $(`<div id="html_13f36ab4e3e162339a35b50f3cec1320" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>GMTP MIKE</b><br>         55133, Greece     </div>     </div>`)[0];
+                popup_c09f7f347050e1f2d30a96ffd112bd0b.setContent(html_13f36ab4e3e162339a35b50f3cec1320);
+            
+        
+
+        circle_marker_261d2ef4b558538ec91f789a8a94df43.bindPopup(popup_c09f7f347050e1f2d30a96ffd112bd0b)
+        ;
+
+        
+    
+    
+            circle_marker_261d2ef4b558538ec91f789a8a94df43.bindTooltip(
+                `<div>
+                     GMTP MIKE - 55133, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_76ab545f902832fb94bbebb3ab12ef1e = L.circleMarker(
+                [41.1171078, 25.4054806],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_c7ba6ff3cf400cade8a353f6bc50712e = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_7b8b0d5a90145d24dd7f7fd5ca6c5e71 = $(`<div id="html_7b8b0d5a90145d24dd7f7fd5ca6c5e71" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΒΟΥΤΣΑΣ ΔΗΜΟΣ</b><br>         69100, Greece     </div>     </div>`)[0];
+                popup_c7ba6ff3cf400cade8a353f6bc50712e.setContent(html_7b8b0d5a90145d24dd7f7fd5ca6c5e71);
+            
+        
+
+        circle_marker_76ab545f902832fb94bbebb3ab12ef1e.bindPopup(popup_c7ba6ff3cf400cade8a353f6bc50712e)
+        ;
+
+        
+    
+    
+            circle_marker_76ab545f902832fb94bbebb3ab12ef1e.bindTooltip(
+                `<div>
+                     ΒΟΥΤΣΑΣ ΔΗΜΟΣ - 69100, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_1b6ca4a9f9131f9a01051227462e3659 = L.circleMarker(
+                [36.982577, 26.968252],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_543ed0b9556de0c263f853ec0fa7b030 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_451581a10270630e44ae439e0acdcd6a = $(`<div id="html_451581a10270630e44ae439e0acdcd6a" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΦΑΡΜΑΚΕΙΟ ΒΑΣΙΛΕΙΟΣ ΕΜΜΑΝΟΥΗΛ  ΓΑΒΑΛΑΣ</b><br>         85200, Greece     </div>     </div>`)[0];
+                popup_543ed0b9556de0c263f853ec0fa7b030.setContent(html_451581a10270630e44ae439e0acdcd6a);
+            
+        
+
+        circle_marker_1b6ca4a9f9131f9a01051227462e3659.bindPopup(popup_543ed0b9556de0c263f853ec0fa7b030)
+        ;
+
+        
+    
+    
+            circle_marker_1b6ca4a9f9131f9a01051227462e3659.bindTooltip(
+                `<div>
+                     ΦΑΡΜΑΚΕΙΟ ΒΑΣΙΛΕΙΟΣ ΕΜΜΑΝΟΥΗΛ  ΓΑΒΑΛΑΣ - 85200, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_297f9d39e5352b0122ca1f0a2df25993 = L.circleMarker(
+                [37.4376334, 24.9357171],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_7409e733e0a2808db26954a392a16d27 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_b96a028a8ec73ebb3b4923ce352b5044 = $(`<div id="html_b96a028a8ec73ebb3b4923ce352b5044" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΣΤΑΘΟΠΟΥΛΟΣ ΚΑΙ ΣΙΑ ΕΕ</b><br>         84100, Greece     </div>     </div>`)[0];
+                popup_7409e733e0a2808db26954a392a16d27.setContent(html_b96a028a8ec73ebb3b4923ce352b5044);
+            
+        
+
+        circle_marker_297f9d39e5352b0122ca1f0a2df25993.bindPopup(popup_7409e733e0a2808db26954a392a16d27)
+        ;
+
+        
+    
+    
+            circle_marker_297f9d39e5352b0122ca1f0a2df25993.bindTooltip(
+                `<div>
+                     ΣΤΑΘΟΠΟΥΛΟΣ ΚΑΙ ΣΙΑ ΕΕ - 84100, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_33a416ed8151bf2c4656429d0146ba20 = L.circleMarker(
+                [39.9358328, 22.1615558],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_bae6faebf4684bc4ccc4744c28e3debf = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_170e53bf1e1a200fab108a8a159dded5 = $(`<div id="html_170e53bf1e1a200fab108a8a159dded5" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>eHealth Care- ΧΕΛΙΔΩΝΗ ΑΝΑΣΤΑΣΙΑ ΗΛΙΑΣ</b><br>         40200, Greece     </div>     </div>`)[0];
+                popup_bae6faebf4684bc4ccc4744c28e3debf.setContent(html_170e53bf1e1a200fab108a8a159dded5);
+            
+        
+
+        circle_marker_33a416ed8151bf2c4656429d0146ba20.bindPopup(popup_bae6faebf4684bc4ccc4744c28e3debf)
+        ;
+
+        
+    
+    
+            circle_marker_33a416ed8151bf2c4656429d0146ba20.bindTooltip(
+                `<div>
+                     eHealth Care- ΧΕΛΙΔΩΝΗ ΑΝΑΣΤΑΣΙΑ ΗΛΙΑΣ - 40200, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_07d35d72755e1759e7ad794bb602ca53 = L.circleMarker(
+                [38.2464559, 21.7348192],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_7b4e2b203e6bec7d0bb6868bd03305ab = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_094d01a8a174ba62a9cfec43259782ee = $(`<div id="html_094d01a8a174ba62a9cfec43259782ee" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΧΑΤΖΗΜΑΡΚΑΚΗΣ ΓΕΩΡΓΙΟΣ</b><br>         26221, Greece     </div>     </div>`)[0];
+                popup_7b4e2b203e6bec7d0bb6868bd03305ab.setContent(html_094d01a8a174ba62a9cfec43259782ee);
+            
+        
+
+        circle_marker_07d35d72755e1759e7ad794bb602ca53.bindPopup(popup_7b4e2b203e6bec7d0bb6868bd03305ab)
+        ;
+
+        
+    
+    
+            circle_marker_07d35d72755e1759e7ad794bb602ca53.bindTooltip(
+                `<div>
+                     ΧΑΤΖΗΜΑΡΚΑΚΗΣ ΓΕΩΡΓΙΟΣ - 26221, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_0b8ef0cb9c3b41ecf17d36905f6c3c4a = L.circleMarker(
+                [43.2581805, -77.6970101],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_17c49449154dd39b2fd64c4d69476f93 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_f7db96a483070ff2a8e7997484371c23 = $(`<div id="html_f7db96a483070ff2a8e7997484371c23" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>REHAB CARE ΑΝΤΩΝΙΟΥ ΑΝΤΩΝΙΟΣ</b><br>         8220, Greece     </div>     </div>`)[0];
+                popup_17c49449154dd39b2fd64c4d69476f93.setContent(html_f7db96a483070ff2a8e7997484371c23);
+            
+        
+
+        circle_marker_0b8ef0cb9c3b41ecf17d36905f6c3c4a.bindPopup(popup_17c49449154dd39b2fd64c4d69476f93)
+        ;
+
+        
+    
+    
+            circle_marker_0b8ef0cb9c3b41ecf17d36905f6c3c4a.bindTooltip(
+                `<div>
+                     REHAB CARE ΑΝΤΩΝΙΟΥ ΑΝΤΩΝΙΟΣ - 8220, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_1b4a6a3882defa74aba7e05b4686e56c = L.circleMarker(
+                [40.6306531, 22.9469153],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_cfa2e6f6bc96c28b5de2e157800ad1e0 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_62345a18d5dcf19854feb0eb896ce216 = $(`<div id="html_62345a18d5dcf19854feb0eb896ce216" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΓΕΩΡΓΟΥΛΑΚΗ ΚΑΛΛΙΟΠΗ</b><br>         54622, Greece     </div>     </div>`)[0];
+                popup_cfa2e6f6bc96c28b5de2e157800ad1e0.setContent(html_62345a18d5dcf19854feb0eb896ce216);
+            
+        
+
+        circle_marker_1b4a6a3882defa74aba7e05b4686e56c.bindPopup(popup_cfa2e6f6bc96c28b5de2e157800ad1e0)
+        ;
+
+        
+    
+    
+            circle_marker_1b4a6a3882defa74aba7e05b4686e56c.bindTooltip(
+                `<div>
+                     ΓΕΩΡΓΟΥΛΑΚΗ ΚΑΛΛΙΟΠΗ - 54622, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_92c354ac250f224c1c341c131165aede = L.circleMarker(
+                [37.9365769, 23.7478924],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_a496d1ec1c186917677718192c15818a = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_9f0f64a05a3071da6ec97ff60b0a7925 = $(`<div id="html_9f0f64a05a3071da6ec97ff60b0a7925" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>REHAB CARE IKE</b><br>         16346, Greece     </div>     </div>`)[0];
+                popup_a496d1ec1c186917677718192c15818a.setContent(html_9f0f64a05a3071da6ec97ff60b0a7925);
+            
+        
+
+        circle_marker_92c354ac250f224c1c341c131165aede.bindPopup(popup_a496d1ec1c186917677718192c15818a)
+        ;
+
+        
+    
+    
+            circle_marker_92c354ac250f224c1c341c131165aede.bindTooltip(
+                `<div>
+                     REHAB CARE IKE - 16346, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_4ce0bffb6e279ce52e4a95cc7b0aa1e8 = L.circleMarker(
+                [43.2433335, -77.827702],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_b4047f0481a5fe5e0dbc41c70870a970 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_ec4e44742089d9c65a2fb4d4d68c5a5d = $(`<div id="html_ec4e44742089d9c65a2fb4d4d68c5a5d" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>SKYMIND A.S. LIMITED</b><br>         1011, Greece     </div>     </div>`)[0];
+                popup_b4047f0481a5fe5e0dbc41c70870a970.setContent(html_ec4e44742089d9c65a2fb4d4d68c5a5d);
+            
+        
+
+        circle_marker_4ce0bffb6e279ce52e4a95cc7b0aa1e8.bindPopup(popup_b4047f0481a5fe5e0dbc41c70870a970)
+        ;
+
+        
+    
+    
+            circle_marker_4ce0bffb6e279ce52e4a95cc7b0aa1e8.bindTooltip(
+                `<div>
+                     SKYMIND A.S. LIMITED - 1011, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_f3a288996d165a9d7bdb70887d7520f8 = L.circleMarker(
+                [38.0045554, 23.3174162],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_88945f25552f3fa070e185430f039308 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_8c81961763148c7d0777e58ca66ef441 = $(`<div id="html_8c81961763148c7d0777e58ca66ef441" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>Δ. ΤΖΑΤΖΑΛΙΑΡΗΣ & Σ. ΤΣΙΡΙΓΩΤΗ ΟΕ</b><br>         19100, Greece     </div>     </div>`)[0];
+                popup_88945f25552f3fa070e185430f039308.setContent(html_8c81961763148c7d0777e58ca66ef441);
+            
+        
+
+        circle_marker_f3a288996d165a9d7bdb70887d7520f8.bindPopup(popup_88945f25552f3fa070e185430f039308)
+        ;
+
+        
+    
+    
+            circle_marker_f3a288996d165a9d7bdb70887d7520f8.bindTooltip(
+                `<div>
+                     Δ. ΤΖΑΤΖΑΛΙΑΡΗΣ & Σ. ΤΣΙΡΙΓΩΤΗ ΟΕ - 19100, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_85c6a9ee019bfbe6b324cb2fb7da8df8 = L.circleMarker(
+                [38.468631, 23.6033374],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_7e3ab05cc431b2cb7a12fcead7e2d73e = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_d3719eff090dd1840d7df058b4d2a0cb = $(`<div id="html_d3719eff090dd1840d7df058b4d2a0cb" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΜΠΕΛΕΓΡΑΤΗ Α Ε.Ε</b><br>         34132, Greece     </div>     </div>`)[0];
+                popup_7e3ab05cc431b2cb7a12fcead7e2d73e.setContent(html_d3719eff090dd1840d7df058b4d2a0cb);
+            
+        
+
+        circle_marker_85c6a9ee019bfbe6b324cb2fb7da8df8.bindPopup(popup_7e3ab05cc431b2cb7a12fcead7e2d73e)
+        ;
+
+        
+    
+    
+            circle_marker_85c6a9ee019bfbe6b324cb2fb7da8df8.bindTooltip(
+                `<div>
+                     ΜΠΕΛΕΓΡΑΤΗ Α Ε.Ε - 34132, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_b7d81ea8a2fefdc4fdda42134f4c7f21 = L.circleMarker(
+                [41.0866975, 23.5551031],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_c0b10067effdc63ee858cf6f1fb83145 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_c2098c4843e8f1455f75a992f325270c = $(`<div id="html_c2098c4843e8f1455f75a992f325270c" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΒΑΔΑΡΛΗΣ ΧΡΗΣΤΟΣ ΜΕΡΤΙΚΑΣ ΠΑΝΑΓΙΩΤΗΣ Ο.Ε.</b><br>         62124, Greece     </div>     </div>`)[0];
+                popup_c0b10067effdc63ee858cf6f1fb83145.setContent(html_c2098c4843e8f1455f75a992f325270c);
+            
+        
+
+        circle_marker_b7d81ea8a2fefdc4fdda42134f4c7f21.bindPopup(popup_c0b10067effdc63ee858cf6f1fb83145)
+        ;
+
+        
+    
+    
+            circle_marker_b7d81ea8a2fefdc4fdda42134f4c7f21.bindTooltip(
+                `<div>
+                     ΒΑΔΑΡΛΗΣ ΧΡΗΣΤΟΣ ΜΕΡΤΙΚΑΣ ΠΑΝΑΓΙΩΤΗΣ Ο.Ε. - 62124, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_28f31ca3203b2fd24e6305c457790bca = L.circleMarker(
+                [38.0140347, 23.7927845],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_dee2bf291e6a2c06a8292fa94f948ed0 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_2277ac0117988640d0fcb2c913d60262 = $(`<div id="html_2277ac0117988640d0fcb2c913d60262" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>MEDISPORTS ΕΠΕ</b><br>         15231, Greece     </div>     </div>`)[0];
+                popup_dee2bf291e6a2c06a8292fa94f948ed0.setContent(html_2277ac0117988640d0fcb2c913d60262);
+            
+        
+
+        circle_marker_28f31ca3203b2fd24e6305c457790bca.bindPopup(popup_dee2bf291e6a2c06a8292fa94f948ed0)
+        ;
+
+        
+    
+    
+            circle_marker_28f31ca3203b2fd24e6305c457790bca.bindTooltip(
+                `<div>
+                     MEDISPORTS ΕΠΕ - 15231, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_cd400dc66a3bb344e47e044060b0fd5f = L.circleMarker(
+                [35.1869553, 26.1335469],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_2388f49eb74f8c2e648a0aaf3ee744f9 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_5e6b830cd83ec5b7f451f72cebc3dfb1 = $(`<div id="html_5e6b830cd83ec5b7f451f72cebc3dfb1" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΓΕΩΡΓΙΟΣ ΜΠΑΓΟΡΔΑΚΗΣ</b><br>         72300, Greece     </div>     </div>`)[0];
+                popup_2388f49eb74f8c2e648a0aaf3ee744f9.setContent(html_5e6b830cd83ec5b7f451f72cebc3dfb1);
+            
+        
+
+        circle_marker_cd400dc66a3bb344e47e044060b0fd5f.bindPopup(popup_2388f49eb74f8c2e648a0aaf3ee744f9)
+        ;
+
+        
+    
+    
+            circle_marker_cd400dc66a3bb344e47e044060b0fd5f.bindTooltip(
+                `<div>
+                     ΓΕΩΡΓΙΟΣ ΜΠΑΓΟΡΔΑΚΗΣ - 72300, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_e3c5e84b72c2fd3199ba1127f978e74b = L.circleMarker(
+                [40.575345, 22.9556242],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_ab61c2334356b50ed5de80ccb46bad28 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_2f8997dd344d45aaacae28da555b2dad = $(`<div id="html_2f8997dd344d45aaacae28da555b2dad" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΚΑΡΔΑΡΑΣ ΠΑΝΑΓΙΩΤΗΣ</b><br>         55132, Greece     </div>     </div>`)[0];
+                popup_ab61c2334356b50ed5de80ccb46bad28.setContent(html_2f8997dd344d45aaacae28da555b2dad);
+            
+        
+
+        circle_marker_e3c5e84b72c2fd3199ba1127f978e74b.bindPopup(popup_ab61c2334356b50ed5de80ccb46bad28)
+        ;
+
+        
+    
+    
+            circle_marker_e3c5e84b72c2fd3199ba1127f978e74b.bindTooltip(
+                `<div>
+                     ΚΑΡΔΑΡΑΣ ΠΑΝΑΓΙΩΤΗΣ - 55132, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_36520adf548e20a77600833622c14bde = L.circleMarker(
+                [41.150402, 24.1472335],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_138364b53af50207f37655a4513063a6 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_d26b47c3bdd442c43318df79509edf72 = $(`<div id="html_d26b47c3bdd442c43318df79509edf72" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΜΠΑΛΛΑΣ Θ. ΠΑΠΑΔΟΠΟΥΛΟΣ Χ. ΟΕ</b><br>         66132, Greece     </div>     </div>`)[0];
+                popup_138364b53af50207f37655a4513063a6.setContent(html_d26b47c3bdd442c43318df79509edf72);
+            
+        
+
+        circle_marker_36520adf548e20a77600833622c14bde.bindPopup(popup_138364b53af50207f37655a4513063a6)
+        ;
+
+        
+    
+    
+            circle_marker_36520adf548e20a77600833622c14bde.bindTooltip(
+                `<div>
+                     ΜΠΑΛΛΑΣ Θ. ΠΑΠΑΔΟΠΟΥΛΟΣ Χ. ΟΕ - 66132, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_6c2e94fb0a0c567dad7312c26be21d1c = L.circleMarker(
+                [38.2528703, 21.7416191],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_8c47b0bc5de553ff9b8e3ab9f629313c = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_0f4f492ca67efa5c252083bf275cb111 = $(`<div id="html_0f4f492ca67efa5c252083bf275cb111" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΥΠΗΡΕΣΙΕΣ ΕΦΑΡΜΟΓΩΝ ΥΓΕΙΑΣ Ι Κ Ε</b><br>         26223, Greece     </div>     </div>`)[0];
+                popup_8c47b0bc5de553ff9b8e3ab9f629313c.setContent(html_0f4f492ca67efa5c252083bf275cb111);
+            
+        
+
+        circle_marker_6c2e94fb0a0c567dad7312c26be21d1c.bindPopup(popup_8c47b0bc5de553ff9b8e3ab9f629313c)
+        ;
+
+        
+    
+    
+            circle_marker_6c2e94fb0a0c567dad7312c26be21d1c.bindTooltip(
+                `<div>
+                     ΥΠΗΡΕΣΙΕΣ ΕΦΑΡΜΟΓΩΝ ΥΓΕΙΑΣ Ι Κ Ε - 26223, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_40c4a41f522c2d102a7d65a9debe9a2b = L.circleMarker(
+                [37.9974095, 23.7737106],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_d61ad321a4778254e6bbbb9c59950fb7 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_c936a6011246c7017c29af7234011f23 = $(`<div id="html_c936a6011246c7017c29af7234011f23" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>OXYGENIUM ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ</b><br>         11525, Greece     </div>     </div>`)[0];
+                popup_d61ad321a4778254e6bbbb9c59950fb7.setContent(html_c936a6011246c7017c29af7234011f23);
+            
+        
+
+        circle_marker_40c4a41f522c2d102a7d65a9debe9a2b.bindPopup(popup_d61ad321a4778254e6bbbb9c59950fb7)
+        ;
+
+        
+    
+    
+            circle_marker_40c4a41f522c2d102a7d65a9debe9a2b.bindTooltip(
+                `<div>
+                     OXYGENIUM ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ - 11525, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_1889dd1d23b6cd4c51d9947db87ff016 = L.circleMarker(
+                [40.6018774, 22.9716118],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_3ae5826fdc81b55048c9388c34418d13 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_f20c925f30126706c572915af6d85a80 = $(`<div id="html_f20c925f30126706c572915af6d85a80" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΛΟΥΠΕΪΔΗΣ ΜΕΛΕΤΙΟΣ</b><br>         54250, Greece     </div>     </div>`)[0];
+                popup_3ae5826fdc81b55048c9388c34418d13.setContent(html_f20c925f30126706c572915af6d85a80);
+            
+        
+
+        circle_marker_1889dd1d23b6cd4c51d9947db87ff016.bindPopup(popup_3ae5826fdc81b55048c9388c34418d13)
+        ;
+
+        
+    
+    
+            circle_marker_1889dd1d23b6cd4c51d9947db87ff016.bindTooltip(
+                `<div>
+                     ΛΟΥΠΕΪΔΗΣ ΜΕΛΕΤΙΟΣ - 54250, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_5d4830060472af5ce0464aa3148cf4e6 = L.circleMarker(
+                [37.9497164, 23.7002085],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_8ebd2ae538ea160bacaa09fbb2f2a64c = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_2f6e60c82f94335bc85a4e6010dcc5c1 = $(`<div id="html_2f6e60c82f94335bc85a4e6010dcc5c1" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>HEALTH TEAM ΙΑΤΡΙΚΑ ΙΚΕ</b><br>         17673, Greece     </div>     </div>`)[0];
+                popup_8ebd2ae538ea160bacaa09fbb2f2a64c.setContent(html_2f6e60c82f94335bc85a4e6010dcc5c1);
+            
+        
+
+        circle_marker_5d4830060472af5ce0464aa3148cf4e6.bindPopup(popup_8ebd2ae538ea160bacaa09fbb2f2a64c)
+        ;
+
+        
+    
+    
+            circle_marker_5d4830060472af5ce0464aa3148cf4e6.bindTooltip(
+                `<div>
+                     HEALTH TEAM ΙΑΤΡΙΚΑ ΙΚΕ - 17673, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_77ff32fef00e275fefdf7aa5c9e90ee4 = L.circleMarker(
+                [41.150402, 24.1472335],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_e90ba848975d175ac3732fccc5f9a558 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_9b1c5830eddb1769a984190ee7d1bb74 = $(`<div id="html_9b1c5830eddb1769a984190ee7d1bb74" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΑΝΤΩΝΗΣ ΤΣΑΚΙΡΟΓΛΟΥ & ΣΙΑ Ο.Ε.</b><br>         66132, Greece     </div>     </div>`)[0];
+                popup_e90ba848975d175ac3732fccc5f9a558.setContent(html_9b1c5830eddb1769a984190ee7d1bb74);
+            
+        
+
+        circle_marker_77ff32fef00e275fefdf7aa5c9e90ee4.bindPopup(popup_e90ba848975d175ac3732fccc5f9a558)
+        ;
+
+        
+    
+    
+            circle_marker_77ff32fef00e275fefdf7aa5c9e90ee4.bindTooltip(
+                `<div>
+                     ΑΝΤΩΝΗΣ ΤΣΑΚΙΡΟΓΛΟΥ & ΣΙΑ Ο.Ε. - 66132, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_f9ca5148a80bd81301a40e4b6d18ff5d = L.circleMarker(
+                [38.0045554, 23.3174162],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_839abe5e3ee031345618e17a6897c3ae = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_12674e20d7e67da93e06f32dd8ad650b = $(`<div id="html_12674e20d7e67da93e06f32dd8ad650b" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΛΑΓΙΟΣ Γ ΣΩΚΡΑΤΗΣ</b><br>         19100, Greece     </div>     </div>`)[0];
+                popup_839abe5e3ee031345618e17a6897c3ae.setContent(html_12674e20d7e67da93e06f32dd8ad650b);
+            
+        
+
+        circle_marker_f9ca5148a80bd81301a40e4b6d18ff5d.bindPopup(popup_839abe5e3ee031345618e17a6897c3ae)
+        ;
+
+        
+    
+    
+            circle_marker_f9ca5148a80bd81301a40e4b6d18ff5d.bindTooltip(
+                `<div>
+                     ΛΑΓΙΟΣ Γ ΣΩΚΡΑΤΗΣ - 19100, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_8b1be5ac3e295781d31379187237b44c = L.circleMarker(
+                [40.352507, 23.86435],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_a483801e6f095e6134407c59a1c335a5 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_98de56f34ad3dd33957d69092f6b0c22 = $(`<div id="html_98de56f34ad3dd33957d69092f6b0c22" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΕΛΕΝΗ Α. ΚΑΡΑΣΤΕΡΓΙΟΥ</b><br>         63075, Greece     </div>     </div>`)[0];
+                popup_a483801e6f095e6134407c59a1c335a5.setContent(html_98de56f34ad3dd33957d69092f6b0c22);
+            
+        
+
+        circle_marker_8b1be5ac3e295781d31379187237b44c.bindPopup(popup_a483801e6f095e6134407c59a1c335a5)
+        ;
+
+        
+    
+    
+            circle_marker_8b1be5ac3e295781d31379187237b44c.bindTooltip(
+                `<div>
+                     ΕΛΕΝΗ Α. ΚΑΡΑΣΤΕΡΓΙΟΥ - 63075, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_aaec94c913a1e9e1abf392810d1a7732 = L.circleMarker(
+                [37.9773043, 23.7621822],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_71170081d4ad69dac55b8f32daf9a6c3 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_cb5f96d0bcd1a28a5a9d2d386a7a9e6b = $(`<div id="html_cb5f96d0bcd1a28a5a9d2d386a7a9e6b" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΦΑΡΜΑΚΕΙΟ ΑΙΚΑΤΕΡΙΝΗΣ Χ. ΠΡΙΟΒΟΛΟΥ</b><br>         15771, Greece     </div>     </div>`)[0];
+                popup_71170081d4ad69dac55b8f32daf9a6c3.setContent(html_cb5f96d0bcd1a28a5a9d2d386a7a9e6b);
+            
+        
+
+        circle_marker_aaec94c913a1e9e1abf392810d1a7732.bindPopup(popup_71170081d4ad69dac55b8f32daf9a6c3)
+        ;
+
+        
+    
+    
+            circle_marker_aaec94c913a1e9e1abf392810d1a7732.bindTooltip(
+                `<div>
+                     ΦΑΡΜΑΚΕΙΟ ΑΙΚΑΤΕΡΙΝΗΣ Χ. ΠΡΙΟΒΟΛΟΥ - 15771, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_6296d5bde95308ced8739f10cd27ee32 = L.circleMarker(
+                [38.440696, 22.8805499],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_75ca98add0822e355b278fc89b2d5d86 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_3c5f4798a2ba90b42a3f79a529480ae8 = $(`<div id="html_3c5f4798a2ba90b42a3f79a529480ae8" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΣΥΣΤ ΦΑΡΜ. ΙΘ.ΚΟΜΠΟΤΗΣ-Α.Α ΚΟΛΟΚΥΘΑ Ο.Ε</b><br>         32100, Greece     </div>     </div>`)[0];
+                popup_75ca98add0822e355b278fc89b2d5d86.setContent(html_3c5f4798a2ba90b42a3f79a529480ae8);
+            
+        
+
+        circle_marker_6296d5bde95308ced8739f10cd27ee32.bindPopup(popup_75ca98add0822e355b278fc89b2d5d86)
+        ;
+
+        
+    
+    
+            circle_marker_6296d5bde95308ced8739f10cd27ee32.bindTooltip(
+                `<div>
+                     ΣΥΣΤ ΦΑΡΜ. ΙΘ.ΚΟΜΠΟΤΗΣ-Α.Α ΚΟΛΟΚΥΘΑ Ο.Ε - 32100, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_fde352c32656d82ec33f3d83d9767d18 = L.circleMarker(
+                [39.5571616, 21.750484],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_76f850270996416aea2b4ca89fa0f8f1 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_f42e8c63f4ac01cf85fb7cc7342b03d1 = $(`<div id="html_f42e8c63f4ac01cf85fb7cc7342b03d1" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΑΙΚΑΤΕΡΙΝΗ ΤΣΕΛΙΟΥ ΚΑΙ ΣΙΑ Ο.Ε</b><br>         42100, Greece     </div>     </div>`)[0];
+                popup_76f850270996416aea2b4ca89fa0f8f1.setContent(html_f42e8c63f4ac01cf85fb7cc7342b03d1);
+            
+        
+
+        circle_marker_fde352c32656d82ec33f3d83d9767d18.bindPopup(popup_76f850270996416aea2b4ca89fa0f8f1)
+        ;
+
+        
+    
+    
+            circle_marker_fde352c32656d82ec33f3d83d9767d18.bindTooltip(
+                `<div>
+                     ΑΙΚΑΤΕΡΙΝΗ ΤΣΕΛΙΟΥ ΚΑΙ ΣΙΑ Ο.Ε - 42100, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_40a93f3fffc1d969c9b895c4fbdbb7b0 = L.circleMarker(
+                [40.5434956, 23.0083757],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_447b7a8eae107b7abb6ede94ccbd20e2 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_0a3fe3b279bd92115d717e1a3726d0f2 = $(`<div id="html_0a3fe3b279bd92115d717e1a3726d0f2" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΦΑΡΜΑΚΕΙΟ ΦΑΝΟΥΛΑΣ ΣΠΥΡΙΔΩΝ</b><br>         57001, Greece     </div>     </div>`)[0];
+                popup_447b7a8eae107b7abb6ede94ccbd20e2.setContent(html_0a3fe3b279bd92115d717e1a3726d0f2);
+            
+        
+
+        circle_marker_40a93f3fffc1d969c9b895c4fbdbb7b0.bindPopup(popup_447b7a8eae107b7abb6ede94ccbd20e2)
+        ;
+
+        
+    
+    
+            circle_marker_40a93f3fffc1d969c9b895c4fbdbb7b0.bindTooltip(
+                `<div>
+                     ΦΑΡΜΑΚΕΙΟ ΦΑΝΟΥΛΑΣ ΣΠΥΡΙΔΩΝ - 57001, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_0cf0536f6c39a09bd86798752c55c1bd = L.circleMarker(
+                [40.6551579, 22.9372699],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_85faaa15af83975434e330440bfc4ca1 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_28be972d026c4e1576738fb80f5a8a62 = $(`<div id="html_28be972d026c4e1576738fb80f5a8a62" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΦΑΡΜΑΚΕΙΟ ΝΤΑΓΚΑΣ ΙΩΑΝΝΗΣ</b><br>         56727, Greece     </div>     </div>`)[0];
+                popup_85faaa15af83975434e330440bfc4ca1.setContent(html_28be972d026c4e1576738fb80f5a8a62);
+            
+        
+
+        circle_marker_0cf0536f6c39a09bd86798752c55c1bd.bindPopup(popup_85faaa15af83975434e330440bfc4ca1)
+        ;
+
+        
+    
+    
+            circle_marker_0cf0536f6c39a09bd86798752c55c1bd.bindTooltip(
+                `<div>
+                     ΦΑΡΜΑΚΕΙΟ ΝΤΑΓΚΑΣ ΙΩΑΝΝΗΣ - 56727, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_0546a0bed712206c5c13fd9a04cb40d1 = L.circleMarker(
+                [40.6437255, 22.9415318],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_4c0d79ddacfe941fd45d6f782cc97553 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_bce6ad5da9c044046097e2516140a8c8 = $(`<div id="html_bce6ad5da9c044046097e2516140a8c8" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΣΥΣΤΕΓΑΣΜΕΝΑ ΦΑΡΜΑΚΕΙΑ ΠΑΝΤΟΥ ΙΩΑΝΝΑ-ΓΙΑΝΝΟΥΛΗ ΑΝΔΡΟΝΙΚΗ ΚΑΙ ΣΙΑ ΟΕ</b><br>         54632, Greece     </div>     </div>`)[0];
+                popup_4c0d79ddacfe941fd45d6f782cc97553.setContent(html_bce6ad5da9c044046097e2516140a8c8);
+            
+        
+
+        circle_marker_0546a0bed712206c5c13fd9a04cb40d1.bindPopup(popup_4c0d79ddacfe941fd45d6f782cc97553)
+        ;
+
+        
+    
+    
+            circle_marker_0546a0bed712206c5c13fd9a04cb40d1.bindTooltip(
+                `<div>
+                     ΣΥΣΤΕΓΑΣΜΕΝΑ ΦΑΡΜΑΚΕΙΑ ΠΑΝΤΟΥ ΙΩΑΝΝΑ-ΓΙΑΝΝΟΥΛΗ ΑΝΔΡΟΝΙΚΗ ΚΑΙ ΣΙΑ ΟΕ - 54632, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_e05b5ff9253556193d04eefdef8a0b6e = L.circleMarker(
+                [40.352507, 23.86435],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_13f8dd9ccbb6a7df2c3cc6b995fbe4e4 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_2eac2aacf428c4c723a7f1933fe3a76a = $(`<div id="html_2eac2aacf428c4c723a7f1933fe3a76a" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΦΑΡΜΑΚΕΙΟ ΔΗΜΗΤΡΙΟΣ  Ι ΜΗΤΡΟΦΑΝΗΣ</b><br>         63075, Greece     </div>     </div>`)[0];
+                popup_13f8dd9ccbb6a7df2c3cc6b995fbe4e4.setContent(html_2eac2aacf428c4c723a7f1933fe3a76a);
+            
+        
+
+        circle_marker_e05b5ff9253556193d04eefdef8a0b6e.bindPopup(popup_13f8dd9ccbb6a7df2c3cc6b995fbe4e4)
+        ;
+
+        
+    
+    
+            circle_marker_e05b5ff9253556193d04eefdef8a0b6e.bindTooltip(
+                `<div>
+                     ΦΑΡΜΑΚΕΙΟ ΔΗΜΗΤΡΙΟΣ  Ι ΜΗΤΡΟΦΑΝΗΣ - 63075, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_d7063ecb23204d3f91e0126bb12fdc39 = L.circleMarker(
+                [38.0691655, 23.5974741],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_509d91883f12c30db4165cee45b71084 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_c6242326f6af46253e9aff0588f8857e = $(`<div id="html_c6242326f6af46253e9aff0588f8857e" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΚΟΛΙΟΣ ΑΝΤΩΝΗΣ Τ. ΝΙΚΟΛΑΟΥ</b><br>         19300, Greece     </div>     </div>`)[0];
+                popup_509d91883f12c30db4165cee45b71084.setContent(html_c6242326f6af46253e9aff0588f8857e);
+            
+        
+
+        circle_marker_d7063ecb23204d3f91e0126bb12fdc39.bindPopup(popup_509d91883f12c30db4165cee45b71084)
+        ;
+
+        
+    
+    
+            circle_marker_d7063ecb23204d3f91e0126bb12fdc39.bindTooltip(
+                `<div>
+                     ΚΟΛΙΟΣ ΑΝΤΩΝΗΣ Τ. ΝΙΚΟΛΑΟΥ - 19300, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_3a6c58321534f99285dc38f972cd19d2 = L.circleMarker(
+                [39.3625196, 22.9509185],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_2d8c6ab33c4491ffeee528129a4c625f = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_7f299956f0c425a8855d54bb5e026d4f = $(`<div id="html_7f299956f0c425a8855d54bb5e026d4f" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΤΣΙΟΤΣΙΟΣ ΑΘΑΝΑΣΙΟΣ ΟΕ</b><br>         38221, Greece     </div>     </div>`)[0];
+                popup_2d8c6ab33c4491ffeee528129a4c625f.setContent(html_7f299956f0c425a8855d54bb5e026d4f);
+            
+        
+
+        circle_marker_3a6c58321534f99285dc38f972cd19d2.bindPopup(popup_2d8c6ab33c4491ffeee528129a4c625f)
+        ;
+
+        
+    
+    
+            circle_marker_3a6c58321534f99285dc38f972cd19d2.bindTooltip(
+                `<div>
+                     ΤΣΙΟΤΣΙΟΣ ΑΘΑΝΑΣΙΟΣ ΟΕ - 38221, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_da45c32b27bd4a1e5fac2de7c846bd43 = L.circleMarker(
+                [40.2532112, 23.276714],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_8d3bf761ce65d51b5dc0750e6ddf9fd5 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_7bf9dc3df8487b1bb619d9c9f8efdcb8 = $(`<div id="html_7bf9dc3df8487b1bb619d9c9f8efdcb8" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΣΥΣΤ ΦΑΡΜ ΜΙΧΑΗΛ ΜΑΡΓΑΡΙΤΙΔΗΣ-ΡΑΦΑΕΛΑ ΜΑΡΓΑΡΙΤΙΔΟΥ ΟΕ</b><br>         63200, Greece     </div>     </div>`)[0];
+                popup_8d3bf761ce65d51b5dc0750e6ddf9fd5.setContent(html_7bf9dc3df8487b1bb619d9c9f8efdcb8);
+            
+        
+
+        circle_marker_da45c32b27bd4a1e5fac2de7c846bd43.bindPopup(popup_8d3bf761ce65d51b5dc0750e6ddf9fd5)
+        ;
+
+        
+    
+    
+            circle_marker_da45c32b27bd4a1e5fac2de7c846bd43.bindTooltip(
+                `<div>
+                     ΣΥΣΤ ΦΑΡΜ ΜΙΧΑΗΛ ΜΑΡΓΑΡΙΤΙΔΗΣ-ΡΑΦΑΕΛΑ ΜΑΡΓΑΡΙΤΙΔΟΥ ΟΕ - 63200, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_87793fae9d571e907eaf575ba5a786f7 = L.circleMarker(
+                [37.4399031, 25.317742],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_5f1df650f0a2384453f6c36ddd5a54a5 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_04697aaa2cb97c3999eabcd6a0a37a58 = $(`<div id="html_04697aaa2cb97c3999eabcd6a0a37a58" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΦΑΡΜΑΚΕΙΟ ΡΟΥΣΗ ΑΛΚΗΣΤΗΣ</b><br>         84600, Greece     </div>     </div>`)[0];
+                popup_5f1df650f0a2384453f6c36ddd5a54a5.setContent(html_04697aaa2cb97c3999eabcd6a0a37a58);
+            
+        
+
+        circle_marker_87793fae9d571e907eaf575ba5a786f7.bindPopup(popup_5f1df650f0a2384453f6c36ddd5a54a5)
+        ;
+
+        
+    
+    
+            circle_marker_87793fae9d571e907eaf575ba5a786f7.bindTooltip(
+                `<div>
+                     ΦΑΡΜΑΚΕΙΟ ΡΟΥΣΗ ΑΛΚΗΣΤΗΣ - 84600, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_5d1cfc813747fd4000152f448fa70553 = L.circleMarker(
+                [37.9521119, 23.7418356],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_99aae3465b540eadab7edfb9ef4282b4 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_7fbfa738ab51a757de2efb303710a040 = $(`<div id="html_7fbfa738ab51a757de2efb303710a040" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΦΑΡΜΑΚΕΙΟ ΛΑΖΟΓΕΩΡΓΟΥ ΠΑΓΩΝΙΤΣΑ</b><br>         17237, Greece     </div>     </div>`)[0];
+                popup_99aae3465b540eadab7edfb9ef4282b4.setContent(html_7fbfa738ab51a757de2efb303710a040);
+            
+        
+
+        circle_marker_5d1cfc813747fd4000152f448fa70553.bindPopup(popup_99aae3465b540eadab7edfb9ef4282b4)
+        ;
+
+        
+    
+    
+            circle_marker_5d1cfc813747fd4000152f448fa70553.bindTooltip(
+                `<div>
+                     ΦΑΡΜΑΚΕΙΟ ΛΑΖΟΓΕΩΡΓΟΥ ΠΑΓΩΝΙΤΣΑ - 17237, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_fd61c25ec1abdd92538569a8b77df06c = L.circleMarker(
+                [43.2581805, -77.6970101],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_d8599cb7f64b622557c34f61fc64101a = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_2d5a981d4509d76487bc95794f8828ea = $(`<div id="html_2d5a981d4509d76487bc95794f8828ea" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΚΑΡΑΝΙΚΑΣ  ΙΩΑΝΝΗΣ</b><br>         35101, Greece     </div>     </div>`)[0];
+                popup_d8599cb7f64b622557c34f61fc64101a.setContent(html_2d5a981d4509d76487bc95794f8828ea);
+            
+        
+
+        circle_marker_fd61c25ec1abdd92538569a8b77df06c.bindPopup(popup_d8599cb7f64b622557c34f61fc64101a)
+        ;
+
+        
+    
+    
+            circle_marker_fd61c25ec1abdd92538569a8b77df06c.bindTooltip(
+                `<div>
+                     ΚΑΡΑΝΙΚΑΣ  ΙΩΑΝΝΗΣ - 35101, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_4e7a5ca11bda15de22048654e8bf826f = L.circleMarker(
+                [40.7735419, 23.396961],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_6f3d46a787d3370174a86e2a1b9a4549 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_d1b60a45a5dbf54e099baecd464a88a2 = $(`<div id="html_d1b60a45a5dbf54e099baecd464a88a2" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΦΑΡΜΑΚΕΙΟ ΙΩΑΝΝΗΣ ΜΑΛΟΓΙΑΝΝΗΣ ΚΑΙ ΣΙΑ Ο.Ε</b><br>         57002, Greece     </div>     </div>`)[0];
+                popup_6f3d46a787d3370174a86e2a1b9a4549.setContent(html_d1b60a45a5dbf54e099baecd464a88a2);
+            
+        
+
+        circle_marker_4e7a5ca11bda15de22048654e8bf826f.bindPopup(popup_6f3d46a787d3370174a86e2a1b9a4549)
+        ;
+
+        
+    
+    
+            circle_marker_4e7a5ca11bda15de22048654e8bf826f.bindTooltip(
+                `<div>
+                     ΦΑΡΜΑΚΕΙΟ ΙΩΑΝΝΗΣ ΜΑΛΟΓΙΑΝΝΗΣ ΚΑΙ ΣΙΑ Ο.Ε - 57002, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_59bde95822aab97c8332e0814da89007 = L.circleMarker(
+                [38.0088427, 23.663557],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_ada3aadeaa7dcf61fbef59bb578e1cc1 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_ff1db440e8ba4cc02ef89113eed952d7 = $(`<div id="html_ff1db440e8ba4cc02ef89113eed952d7" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΚΕΦΑΛΑ ΔΕΣΠΟΙΝΑ ΧΡΙΣΤΙΝΑ</b><br>         12461, Greece     </div>     </div>`)[0];
+                popup_ada3aadeaa7dcf61fbef59bb578e1cc1.setContent(html_ff1db440e8ba4cc02ef89113eed952d7);
+            
+        
+
+        circle_marker_59bde95822aab97c8332e0814da89007.bindPopup(popup_ada3aadeaa7dcf61fbef59bb578e1cc1)
+        ;
+
+        
+    
+    
+            circle_marker_59bde95822aab97c8332e0814da89007.bindTooltip(
+                `<div>
+                     ΚΕΦΑΛΑ ΔΕΣΠΟΙΝΑ ΧΡΙΣΤΙΝΑ - 12461, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_b0dc1e7c8af2fde5546fa1bd1c1ba938 = L.circleMarker(
+                [37.8660244, 23.7563911],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_2d9555a1b909b0ccd3fddceebbfbd639 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_a589d5c909ab1ce205f7fbc89627cc4a = $(`<div id="html_a589d5c909ab1ce205f7fbc89627cc4a" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΦΑΡΜΑΚΕΙΟ  ΔΙΡΧΑΛΙΔΟΥ  ΡΕΒΕΚΚΑ</b><br>         16674, Greece     </div>     </div>`)[0];
+                popup_2d9555a1b909b0ccd3fddceebbfbd639.setContent(html_a589d5c909ab1ce205f7fbc89627cc4a);
+            
+        
+
+        circle_marker_b0dc1e7c8af2fde5546fa1bd1c1ba938.bindPopup(popup_2d9555a1b909b0ccd3fddceebbfbd639)
+        ;
+
+        
+    
+    
+            circle_marker_b0dc1e7c8af2fde5546fa1bd1c1ba938.bindTooltip(
+                `<div>
+                     ΦΑΡΜΑΚΕΙΟ  ΔΙΡΧΑΛΙΔΟΥ  ΡΕΒΕΚΚΑ - 16674, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_8649908f7bb5c0a07865f147b0388417 = L.circleMarker(
+                [39.4730217, 22.068437],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_01224af120ac40e38fa2fe4042c35f89 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_ed9a8d2a867e343b6aedd0a68183fc01 = $(`<div id="html_ed9a8d2a867e343b6aedd0a68183fc01" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΜΟΥΡΑΤΙΑΝ Χ ΚΩΝΣΤΑΝΤΙΝΟΣ</b><br>         43200, Greece     </div>     </div>`)[0];
+                popup_01224af120ac40e38fa2fe4042c35f89.setContent(html_ed9a8d2a867e343b6aedd0a68183fc01);
+            
+        
+
+        circle_marker_8649908f7bb5c0a07865f147b0388417.bindPopup(popup_01224af120ac40e38fa2fe4042c35f89)
+        ;
+
+        
+    
+    
+            circle_marker_8649908f7bb5c0a07865f147b0388417.bindTooltip(
+                `<div>
+                     ΜΟΥΡΑΤΙΑΝ Χ ΚΩΝΣΤΑΝΤΙΝΟΣ - 43200, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_d83fba2bab42d08ae7df0d3154702886 = L.circleMarker(
+                [38.0921481, 23.8001617],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_8104e1cefa245f8c7a904598c821a97b = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_fef6b7e95f8803882842ed687770b185 = $(`<div id="html_fef6b7e95f8803882842ed687770b185" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΦΑΡΜΑΚΕΙΟ ΧΡΗΣΤΟΥ ΠΑΠΑΙΩΑΝΝΟΥ ΚΑΙ ΣΙΑ ΕΕ</b><br>         14564, Greece     </div>     </div>`)[0];
+                popup_8104e1cefa245f8c7a904598c821a97b.setContent(html_fef6b7e95f8803882842ed687770b185);
+            
+        
+
+        circle_marker_d83fba2bab42d08ae7df0d3154702886.bindPopup(popup_8104e1cefa245f8c7a904598c821a97b)
+        ;
+
+        
+    
+    
+            circle_marker_d83fba2bab42d08ae7df0d3154702886.bindTooltip(
+                `<div>
+                     ΦΑΡΜΑΚΕΙΟ ΧΡΗΣΤΟΥ ΠΑΠΑΙΩΑΝΝΟΥ ΚΑΙ ΣΙΑ ΕΕ - 14564, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_bf6a3f86efe203cfec40de51d102fc00 = L.circleMarker(
+                [39.9358328, 22.1615558],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_7ad76444a611af6d6c3b9354e2f1a5dc = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_ed46d10f9e7a29454c0b2f8abc4beace = $(`<div id="html_ed46d10f9e7a29454c0b2f8abc4beace" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΒΑΛΛΑΣ ΑΠΟΣΤΟΛΟΣ</b><br>         40200, Greece     </div>     </div>`)[0];
+                popup_7ad76444a611af6d6c3b9354e2f1a5dc.setContent(html_ed46d10f9e7a29454c0b2f8abc4beace);
+            
+        
+
+        circle_marker_bf6a3f86efe203cfec40de51d102fc00.bindPopup(popup_7ad76444a611af6d6c3b9354e2f1a5dc)
+        ;
+
+        
+    
+    
+            circle_marker_bf6a3f86efe203cfec40de51d102fc00.bindTooltip(
+                `<div>
+                     ΒΑΛΛΑΣ ΑΠΟΣΤΟΛΟΣ - 40200, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_f91ef3370489a00b3fe0932cb7c6b134 = L.circleMarker(
+                [37.9120907, 23.7198734],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_c72d8ac860bf6612dd7f2fdaa416d63b = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_a164bf3804120187c00f3cb6d193a817 = $(`<div id="html_a164bf3804120187c00f3cb6d193a817" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΦΑΡΜΑΚΕΙΟ ΦΩΤΕΙΝΗ ΙΟΡΔΑΝΟΓΛΟΥ &ΣΙΑ Ε.Ε.</b><br>         17455, Greece     </div>     </div>`)[0];
+                popup_c72d8ac860bf6612dd7f2fdaa416d63b.setContent(html_a164bf3804120187c00f3cb6d193a817);
+            
+        
+
+        circle_marker_f91ef3370489a00b3fe0932cb7c6b134.bindPopup(popup_c72d8ac860bf6612dd7f2fdaa416d63b)
+        ;
+
+        
+    
+    
+            circle_marker_f91ef3370489a00b3fe0932cb7c6b134.bindTooltip(
+                `<div>
+                     ΦΑΡΜΑΚΕΙΟ ΦΩΤΕΙΝΗ ΙΟΡΔΑΝΟΓΛΟΥ &ΣΙΑ Ε.Ε. - 17455, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_7a818a3a93e0b5feaaf2d0acbfa42637 = L.circleMarker(
+                [38.0001646, 23.8752155],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_123bbf90c48068aa1a083d1b14494dde = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_681faf7cf7067f34b84fdd89b0815cc7 = $(`<div id="html_681faf7cf7067f34b84fdd89b0815cc7" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΦΑΡΜΑΚΕΙΟ ΒΑΣΙΛΑΔΙΩΤΗΣ ΗΛΙΑΣ</b><br>         15351, Greece     </div>     </div>`)[0];
+                popup_123bbf90c48068aa1a083d1b14494dde.setContent(html_681faf7cf7067f34b84fdd89b0815cc7);
+            
+        
+
+        circle_marker_7a818a3a93e0b5feaaf2d0acbfa42637.bindPopup(popup_123bbf90c48068aa1a083d1b14494dde)
+        ;
+
+        
+    
+    
+            circle_marker_7a818a3a93e0b5feaaf2d0acbfa42637.bindTooltip(
+                `<div>
+                     ΦΑΡΜΑΚΕΙΟ ΒΑΣΙΛΑΔΙΩΤΗΣ ΗΛΙΑΣ - 15351, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_04f39c1d7dc056d20e21fccd1cd817a9 = L.circleMarker(
+                [41.0884642, 23.548382],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_0ca1c0e0b97c6ccdcb32eec1c569ec58 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_bda28b8f3148c1df3bd848ef76687d78 = $(`<div id="html_bda28b8f3148c1df3bd848ef76687d78" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΑΥΓΕΡΙΝΟΣ ΓΕΩΡ. ΘΕΟΔΩΡΟΣ</b><br>         62123, Greece     </div>     </div>`)[0];
+                popup_0ca1c0e0b97c6ccdcb32eec1c569ec58.setContent(html_bda28b8f3148c1df3bd848ef76687d78);
+            
+        
+
+        circle_marker_04f39c1d7dc056d20e21fccd1cd817a9.bindPopup(popup_0ca1c0e0b97c6ccdcb32eec1c569ec58)
+        ;
+
+        
+    
+    
+            circle_marker_04f39c1d7dc056d20e21fccd1cd817a9.bindTooltip(
+                `<div>
+                     ΑΥΓΕΡΙΝΟΣ ΓΕΩΡ. ΘΕΟΔΩΡΟΣ - 62123, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_1acb407930ad865e6e7f53361f00756c = L.circleMarker(
+                [40.7734432, 22.164001],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_92ef1d1ac2d4c3a87f641c4de7210924 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_67cd9d925a4074562ff65cc1d3999564 = $(`<div id="html_67cd9d925a4074562ff65cc1d3999564" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΔΟΥΛΚΕΡΙΔΗΣ ΚΟΣΜΑΣ ΠΑΝΑΓΙΩΤΗΣ</b><br>         58500, Greece     </div>     </div>`)[0];
+                popup_92ef1d1ac2d4c3a87f641c4de7210924.setContent(html_67cd9d925a4074562ff65cc1d3999564);
+            
+        
+
+        circle_marker_1acb407930ad865e6e7f53361f00756c.bindPopup(popup_92ef1d1ac2d4c3a87f641c4de7210924)
+        ;
+
+        
+    
+    
+            circle_marker_1acb407930ad865e6e7f53361f00756c.bindTooltip(
+                `<div>
+                     ΔΟΥΛΚΕΡΙΔΗΣ ΚΟΣΜΑΣ ΠΑΝΑΓΙΩΤΗΣ - 58500, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_4b525b30f91903ccea16ed6465bcba8d = L.circleMarker(
+                [40.2626246, 22.0882661],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_cb0d5908f1e4a32bc678ca48f533cba2 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_88a09e1312acf7decb48eec64eafda6c = $(`<div id="html_88a09e1312acf7decb48eec64eafda6c" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΦΑΡΜΑΚΕΙΟ ΣΤΕΡΓΙΟΠΟΥΛΟΣ ΑΝΤΩΝΙΟΣ</b><br>         50400, Greece     </div>     </div>`)[0];
+                popup_cb0d5908f1e4a32bc678ca48f533cba2.setContent(html_88a09e1312acf7decb48eec64eafda6c);
+            
+        
+
+        circle_marker_4b525b30f91903ccea16ed6465bcba8d.bindPopup(popup_cb0d5908f1e4a32bc678ca48f533cba2)
+        ;
+
+        
+    
+    
+            circle_marker_4b525b30f91903ccea16ed6465bcba8d.bindTooltip(
+                `<div>
+                     ΦΑΡΜΑΚΕΙΟ ΣΤΕΡΓΙΟΠΟΥΛΟΣ ΑΝΤΩΝΙΟΣ - 50400, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_19836f95e63f52d17ec148f6103a0881 = L.circleMarker(
+                [38.0339904, 23.7383544],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_340b2ef18312230baa898605552f752b = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_6d4a2d02be0db7f173229adfa1996ec5 = $(`<div id="html_6d4a2d02be0db7f173229adfa1996ec5" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΦΑΡΜΑΚΕΙΟ ΑΜΟΥΡΓΙΑΝΟΥ ΜΑΡΙΑ</b><br>         14341, Greece     </div>     </div>`)[0];
+                popup_340b2ef18312230baa898605552f752b.setContent(html_6d4a2d02be0db7f173229adfa1996ec5);
+            
+        
+
+        circle_marker_19836f95e63f52d17ec148f6103a0881.bindPopup(popup_340b2ef18312230baa898605552f752b)
+        ;
+
+        
+    
+    
+            circle_marker_19836f95e63f52d17ec148f6103a0881.bindTooltip(
+                `<div>
+                     ΦΑΡΜΑΚΕΙΟ ΑΜΟΥΡΓΙΑΝΟΥ ΜΑΡΙΑ - 14341, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_1f982b9d6cb0a409681d012d53a4b82c = L.circleMarker(
+                [35.0204693, 25.1314955],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_885bfbd8f4b1330d22408a4535422062 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_372150fd2395900d344a8bc313157fe1 = $(`<div id="html_372150fd2395900d344a8bc313157fe1" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΔΑΣΚΑΛΑΚΗΣ Ι.-ΔΑΣΚΑΛΑΚΗΣ Ν. Ο.Ε</b><br>         70010, Greece     </div>     </div>`)[0];
+                popup_885bfbd8f4b1330d22408a4535422062.setContent(html_372150fd2395900d344a8bc313157fe1);
+            
+        
+
+        circle_marker_1f982b9d6cb0a409681d012d53a4b82c.bindPopup(popup_885bfbd8f4b1330d22408a4535422062)
+        ;
+
+        
+    
+    
+            circle_marker_1f982b9d6cb0a409681d012d53a4b82c.bindTooltip(
+                `<div>
+                     ΔΑΣΚΑΛΑΚΗΣ Ι.-ΔΑΣΚΑΛΑΚΗΣ Ν. Ο.Ε - 70010, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_4206df0bbcc89b4d4ffd331db1d423fc = L.circleMarker(
+                [37.4399031, 25.317742],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_4c3fdc9314a931bce2dcbd5ca78bf44b = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_9638ba16532d95169a0385225cbf76a1 = $(`<div id="html_9638ba16532d95169a0385225cbf76a1" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>ΦΑΡΜΑΚΕΙΟ ΚΙΜΩΝ ΚΟΥΚΟΥΖΕΛΗΣ & ΔΗΜΗΤΡΙΟΣ ΚΟΥΚΟΥΖΕΛΗΣ Ο.Ε.</b><br>         84600, Greece     </div>     </div>`)[0];
+                popup_4c3fdc9314a931bce2dcbd5ca78bf44b.setContent(html_9638ba16532d95169a0385225cbf76a1);
+            
+        
+
+        circle_marker_4206df0bbcc89b4d4ffd331db1d423fc.bindPopup(popup_4c3fdc9314a931bce2dcbd5ca78bf44b)
+        ;
+
+        
+    
+    
+            circle_marker_4206df0bbcc89b4d4ffd331db1d423fc.bindTooltip(
+                `<div>
+                     ΦΑΡΜΑΚΕΙΟ ΚΙΜΩΝ ΚΟΥΚΟΥΖΕΛΗΣ & ΔΗΜΗΤΡΙΟΣ ΚΟΥΚΟΥΖΕΛΗΣ Ο.Ε. - 84600, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_2b65d89293049d7b90fa5c196768b550 = L.circleMarker(
+                [37.9456394, 23.645459],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_b69f86bc22f049b2bfb7522dc663b166 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_e3cb8103a15ada130603e1b12cc8fd1b = $(`<div id="html_e3cb8103a15ada130603e1b12cc8fd1b" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>FYLAKTO 2022</b><br>         18531, Greece     </div>     </div>`)[0];
+                popup_b69f86bc22f049b2bfb7522dc663b166.setContent(html_e3cb8103a15ada130603e1b12cc8fd1b);
+            
+        
+
+        circle_marker_2b65d89293049d7b90fa5c196768b550.bindPopup(popup_b69f86bc22f049b2bfb7522dc663b166)
+        ;
+
+        
+    
+    
+            circle_marker_2b65d89293049d7b90fa5c196768b550.bindTooltip(
+                `<div>
+                     FYLAKTO 2022 - 18531, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_58635fc435137a5fa298c4366eeee085 = L.circleMarker(
+                [52.470943, -1.9244472],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_ea7a02eb749dfc5d15601db0cc6227fe = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_8cadc3aae565133c0ccbe13ac9072b44 = $(`<div id="html_8cadc3aae565133c0ccbe13ac9072b44" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>TECNOWAY SRL</b><br>         61022, Greece     </div>     </div>`)[0];
+                popup_ea7a02eb749dfc5d15601db0cc6227fe.setContent(html_8cadc3aae565133c0ccbe13ac9072b44);
+            
+        
+
+        circle_marker_58635fc435137a5fa298c4366eeee085.bindPopup(popup_ea7a02eb749dfc5d15601db0cc6227fe)
+        ;
+
+        
+    
+    
+            circle_marker_58635fc435137a5fa298c4366eeee085.bindTooltip(
+                `<div>
+                     TECNOWAY SRL - 61022, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_adeeedba932e2045cc14f165796e18a6 = L.circleMarker(
+                [43.2247851, -77.6577015],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_9082f351556f262d74305c0591816169 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_ec07753d460a87957f8f394b371bdb92 = $(`<div id="html_ec07753d460a87957f8f394b371bdb92" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>Moovartes</b><br>         3600, Greece     </div>     </div>`)[0];
+                popup_9082f351556f262d74305c0591816169.setContent(html_ec07753d460a87957f8f394b371bdb92);
+            
+        
+
+        circle_marker_adeeedba932e2045cc14f165796e18a6.bindPopup(popup_9082f351556f262d74305c0591816169)
+        ;
+
+        
+    
+    
+            circle_marker_adeeedba932e2045cc14f165796e18a6.bindTooltip(
+                `<div>
+                     Moovartes - 3600, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_cb682b58c1ce2c9d2360be03d37d38bb = L.circleMarker(
+                [43.2581805, -77.6970101],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_387d6556331c564295efc7cad025a403 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_a57e16c6ab0f57f7c14f50cfff3d64db = $(`<div id="html_a57e16c6ab0f57f7c14f50cfff3d64db" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>MEIJER ORTHOPEDIE</b><br>         1054 BW, Greece     </div>     </div>`)[0];
+                popup_387d6556331c564295efc7cad025a403.setContent(html_a57e16c6ab0f57f7c14f50cfff3d64db);
+            
+        
+
+        circle_marker_cb682b58c1ce2c9d2360be03d37d38bb.bindPopup(popup_387d6556331c564295efc7cad025a403)
+        ;
+
+        
+    
+    
+            circle_marker_cb682b58c1ce2c9d2360be03d37d38bb.bindTooltip(
+                `<div>
+                     MEIJER ORTHOPEDIE - 1054 BW, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_268e403bc835b69463c166e8c83e687b = L.circleMarker(
+                [43.2581805, -77.6970101],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_b415a0c3c558c48c261bb81b3f47c1e5 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_6ad59d2ac982d31cdaf7895fe41d3456 = $(`<div id="html_6ad59d2ac982d31cdaf7895fe41d3456" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>CAMBIOMED  ARTUR PIECZONKA</b><br>         43-300, Greece     </div>     </div>`)[0];
+                popup_b415a0c3c558c48c261bb81b3f47c1e5.setContent(html_6ad59d2ac982d31cdaf7895fe41d3456);
+            
+        
+
+        circle_marker_268e403bc835b69463c166e8c83e687b.bindPopup(popup_b415a0c3c558c48c261bb81b3f47c1e5)
+        ;
+
+        
+    
+    
+            circle_marker_268e403bc835b69463c166e8c83e687b.bindTooltip(
+                `<div>
+                     CAMBIOMED  ARTUR PIECZONKA - 43-300, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_8750bee2de924fbedd32db977a043342 = L.circleMarker(
+                [43.2270114, -77.7317467],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_abce8d6eb5bdacba78fa1cf0539c6604 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_c451631855cfbddfdb38f132ca6002ad = $(`<div id="html_c451631855cfbddfdb38f132ca6002ad" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>Buraca d.o.o</b><br>         1000, Greece     </div>     </div>`)[0];
+                popup_abce8d6eb5bdacba78fa1cf0539c6604.setContent(html_c451631855cfbddfdb38f132ca6002ad);
+            
+        
+
+        circle_marker_8750bee2de924fbedd32db977a043342.bindPopup(popup_abce8d6eb5bdacba78fa1cf0539c6604)
+        ;
+
+        
+    
+    
+            circle_marker_8750bee2de924fbedd32db977a043342.bindTooltip(
+                `<div>
+                     Buraca d.o.o - 1000, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_56d13f3c3d1e1f647cc8daf64e9e5458 = L.circleMarker(
+                [43.2581805, -77.6970101],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_e85f7da42f6e2e572ca048694a64c89d = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_e8925eb3e9cc11180bbc25594ad1662f = $(`<div id="html_e8925eb3e9cc11180bbc25594ad1662f" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>EUMEDICA SRL</b><br>         35027, Greece     </div>     </div>`)[0];
+                popup_e85f7da42f6e2e572ca048694a64c89d.setContent(html_e8925eb3e9cc11180bbc25594ad1662f);
+            
+        
+
+        circle_marker_56d13f3c3d1e1f647cc8daf64e9e5458.bindPopup(popup_e85f7da42f6e2e572ca048694a64c89d)
+        ;
+
+        
+    
+    
+            circle_marker_56d13f3c3d1e1f647cc8daf64e9e5458.bindTooltip(
+                `<div>
+                     EUMEDICA SRL - 35027, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_3008dd12f491f9728ff594e66f5cbb91 = L.circleMarker(
+                [52.470943, -1.9244472],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_f527c0c2e5a4e18a1f47fb6b2a2c81ab = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_a987a01b367017f469c7e0b5544a1ee9 = $(`<div id="html_a987a01b367017f469c7e0b5544a1ee9" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>SPECIALISTCENTER SCANDINAVIA</b><br>         63220, Greece     </div>     </div>`)[0];
+                popup_f527c0c2e5a4e18a1f47fb6b2a2c81ab.setContent(html_a987a01b367017f469c7e0b5544a1ee9);
+            
+        
+
+        circle_marker_3008dd12f491f9728ff594e66f5cbb91.bindPopup(popup_f527c0c2e5a4e18a1f47fb6b2a2c81ab)
+        ;
+
+        
+    
+    
+            circle_marker_3008dd12f491f9728ff594e66f5cbb91.bindTooltip(
+                `<div>
+                     SPECIALISTCENTER SCANDINAVIA - 63220, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_970df0c9feb2aa420b2ed703af6cec97 = L.circleMarker(
+                [43.2581805, -77.6970101],
+                {"bubblingMouseEvents": true, "color": "#ff6600", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff6600", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(map_c904a1c4d2da93d0bac87b09593f640b);
+        
+    
+        var popup_960e68816d953e30818fda4fe33c3766 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_9371d77c1c20e3b55a101bf016d0a4c8 = $(`<div id="html_9371d77c1c20e3b55a101bf016d0a4c8" style="width: 100.0%; height: 100.0%;">     <div style="font-size:13px">         <b>HIBERNIA MEDICAL SUPPLIES LTD</b><br>         D12 NA40, Greece     </div>     </div>`)[0];
+                popup_960e68816d953e30818fda4fe33c3766.setContent(html_9371d77c1c20e3b55a101bf016d0a4c8);
+            
+        
+
+        circle_marker_970df0c9feb2aa420b2ed703af6cec97.bindPopup(popup_960e68816d953e30818fda4fe33c3766)
+        ;
+
+        
+    
+    
+            circle_marker_970df0c9feb2aa420b2ed703af6cec97.bindTooltip(
+                `<div>
+                     HIBERNIA MEDICAL SUPPLIES LTD - D12 NA40, Greece
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+</script>
+</html>
